@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gob.pe.minam.restceropapel.api.repository.ICiudadanoMapper">
+
+
+    <resultMap id="representanteResult" type="Ciudadano" >
+        <result column="ID_CIUDADANO" property="idCiudadano"/>
+        <result column="ID_USUARIO" property="idUsuario"/>
+        <result column="ID_NATURAL" property="idNatural"/>
+        <result column="ID_JURIDICA" property="idJuridica"/>
+        <result column="NUM_DNI" property="numDni"/>
+        <result column="NOMBRES" property="nombresCompleto"/>
+        <result column="ESTADO_REPRESE" property="estadoReprese"/>
+        <result column="FEC_INICIO_REP" property="fecInicioRep"/>
+        <result column="FEC_FIN_REP" property="fecFinRep"/>
+        <result column="TXT_DIRECCION" property="txtDireccion"/>
+        <result column="NUM_TELEFONO_CELULAR" property="numTelefonoCelular"/>
+        <result column="TXT_CORREO_ELECTRONICO" property="txtCorreoElectronico"/>
+        <result column="ID_UBIGEO_DOMICILIO" property="idUbigeoDomicilio"/>
+    </resultMap>
+
+    <parameterMap id="representanteLegalParametro" type="Ciudadano">
+        <parameter property="idJuridica" jdbcType="INTEGER" mode="IN"  />
+        <parameter property="listCiudadano" jdbcType="CURSOR" mode="OUT" resultMap="representanteResult"  />
+    </parameterMap>
+
+    <select id="spBuscarCiudadano" parameterType="Ciudadano" statementType="CALLABLE">
+     { CALL
+        BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_GET_CIUDADANO_DOC(
+            #{numeroDocumento, mode=IN, jdbcType=VARCHAR},
+            #{idTipoDocumento, mode=IN, jdbcType=VARCHAR},
+            #{idCiudadano, mode=OUT, jdbcType=NUMERIC},
+            #{idUsuario, mode=OUT, jdbcType=NUMERIC},
+            #{idNatural, mode=OUT, jdbcType=NUMERIC},
+            #{idJuridica, mode=OUT, jdbcType=NUMERIC},
+            #{txtDireccion, mode=OUT, jdbcType=VARCHAR},
+            #{numTelefonoCelular, mode=OUT, jdbcType=VARCHAR},
+            #{txtCorreoElectronico, mode=OUT, jdbcType=VARCHAR},
+            #{idUbigeoDomicilio, mode=OUT, jdbcType=NUMERIC}
+            )
+        }
+    </select>
+
+
+    <select id="spBuscarCiudadanoConsolidado" parameterType="Ciudadano" statementType="CALLABLE">
+     { CALL
+        BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_GET_CIUDADANO_CSLD(
+            #{idCiudadano, mode=IN, jdbcType=NUMERIC},
+            #{idUsuario, mode=OUT, jdbcType=NUMERIC},
+            #{idNatural, mode=OUT, jdbcType=NUMERIC},
+            #{idJuridica, mode=OUT, jdbcType=NUMERIC},
+            #{numDni, mode=OUT, jdbcType=VARCHAR},
+            #{txtApellidoPaterno, mode=OUT, jdbcType=VARCHAR},
+            #{txtApellidoMaterno, mode=OUT, jdbcType=VARCHAR},
+            #{nombres, mode=OUT, jdbcType=VARCHAR},
+            #{numRuc, mode=OUT, jdbcType=VARCHAR},
+            #{razonSocial, mode=OUT, jdbcType=VARCHAR},
+            #{txtDireccion, mode=OUT, jdbcType=VARCHAR},
+            #{numTelefonoCelular, mode=OUT, jdbcType=VARCHAR},
+            #{txtCorreoElectronico, mode=OUT, jdbcType=VARCHAR},
+            #{idUbigeoDomicilio, mode=OUT, jdbcType=NUMERIC}
+            )
+        }
+    </select>
+    <select id="spBuscarCiudadanoRepresentanteLegal" parameterMap="representanteLegalParametro" statementType="CALLABLE">
+        {CALL BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_GET_REPRESENTANTE_LEGAL(?, ?)}
+    </select>
+
+    <select id="spBuscarCiudadanoId" parameterType="Ciudadano" statementType="CALLABLE">
+           { CALL
+                BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_GET_CIUDADANO_ID(
+                    #{idCiudadano, mode=IN, jdbcType=NUMERIC},
+                    #{idUsuario, mode=OUT, jdbcType=NUMERIC},
+                    #{idNatural, mode=OUT, jdbcType=NUMERIC},
+                    #{idJuridica, mode=OUT, jdbcType=NUMERIC},
+                    #{txtDireccion, mode=OUT, jdbcType=VARCHAR},
+                    #{numTelefonoCelular, mode=OUT, jdbcType=VARCHAR},
+                    #{txtCorreoElectronico, mode=OUT, jdbcType=VARCHAR},
+                    #{idUbigeoDomicilio, mode=OUT, jdbcType=NUMERIC}
+                    )
+                }
+    </select>
+    <insert id="spInsertCiudadano" parameterType="Ciudadano" statementType="CALLABLE">
+        { CALL
+        BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_INSERT_CIUDADANO(
+            #{idUsuario, mode=IN, jdbcType=NUMERIC},
+            #{idNatural, mode=IN, jdbcType=NUMERIC},
+            #{idJuridica, mode=IN, jdbcType=NUMERIC},
+            #{txtDireccion, mode=IN, jdbcType=VARCHAR},
+            #{numTelefonoCelular, mode=IN, jdbcType=VARCHAR},
+            #{txtCorreoElectronico, mode=IN, jdbcType=VARCHAR},
+            #{idUbigeoDomicilio, mode=IN, jdbcType=NUMERIC},
+            #{idSesionReg, mode=IN, jdbcType=NUMERIC},
+            #{idSesionMod, mode=IN, jdbcType=NUMERIC},
+            #{idCiudadano, mode=OUT, jdbcType=NUMERIC},
+            #{resultado, mode=OUT, jdbcType=VARCHAR}
+            )
+        }
+    </insert>
+    <insert id="spInsertPersonaNatural" parameterType="PersonaNatural" statementType="CALLABLE">
+        { CALL
+        BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_INSERT_PERSONATURAL(
+            #{numDni, mode=IN, jdbcType=VARCHAR},
+            #{txtApePaterno, mode=IN, jdbcType=VARCHAR},
+            #{txtApeMaterno, mode=IN, jdbcType=VARCHAR},
+            #{txtNombres, mode=IN, jdbcType=VARCHAR},
+            #{flgSexo, mode=IN, jdbcType=VARCHAR},
+            #{fecNacimiento, mode=IN, jdbcType=VARCHAR},
+            #{idSesionReg, mode=IN, jdbcType=NUMERIC},
+            #{idSesionMod, mode=IN, jdbcType=NUMERIC},
+            #{idNatural, mode=OUT, jdbcType=NUMERIC},
+            #{resultado, mode=OUT, jdbcType=VARCHAR}
+            )
+        }
+    </insert>
+
+    <insert id="spInsertPersonaJuridica" parameterType="PersonaJuridica" statementType="CALLABLE">
+        { CALL
+        BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_INSERT_PERSOJURIDICA(
+            #{numRuc, mode=IN, jdbcType=VARCHAR},
+            #{txtRazonSocial, mode=IN, jdbcType=VARCHAR},
+            #{numPartidaElectronica, mode=IN, jdbcType=VARCHAR},
+            #{numAsientoRegistral, mode=IN, jdbcType=VARCHAR},
+            #{idRepresentanteLegal, mode=IN, jdbcType=NUMERIC},
+            #{idSesionReg, mode=IN, jdbcType=NUMERIC},
+            #{idSesionMod, mode=IN, jdbcType=NUMERIC},
+            #{idJuridica, mode=OUT, jdbcType=NUMERIC},
+            #{resultado, mode=OUT, jdbcType=VARCHAR}
+            )
+        }
+    </insert>
+    <update id="spQuitarRepresentates" parameterType="Ciudadano" statementType="CALLABLE">
+        { CALL
+        BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_QUITAR_REPRESENTANTE(
+            #{idJuridica, mode=IN, jdbcType=NUMERIC},
+            #{idSesionMod, mode=IN, jdbcType=NUMERIC},
+            #{resultado, mode=OUT, jdbcType=VARCHAR}
+            )
+        }
+    </update>
+    <update id="spAsignarRepresentanteLegal" parameterType="Ciudadano" statementType="CALLABLE">
+        { CALL
+        BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_ASIGNAR_REPRESENTANTE(
+            #{idJuridica, mode=IN, jdbcType=NUMERIC},
+            #{idNatural, mode=IN, jdbcType=NUMERIC},
+            #{idSesionMod, mode=IN, jdbcType=NUMERIC},
+            #{resultado, mode=OUT, jdbcType=VARCHAR}
+            )
+        }
+    </update>
+
+
+
+</mapper>

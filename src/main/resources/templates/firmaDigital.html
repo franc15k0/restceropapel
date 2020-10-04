@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<html>
+<head>
+    <title>ReFirma Invoker - RENIEC</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="description" content=""/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet"	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script type="text/javascript"src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+
+    <script type="text/javascript" src="https://dsp.reniec.gob.pe/refirma_invoker/resources/js/client.js"></script>
+
+    <script type="text/javascript">
+        //<![CDATA[
+
+
+        var documentName_ = null;
+        //
+        $(document).ready(function() {
+            cargarInvoker();
+        });
+        async function cargarInvoker() {
+            await sleep(1000);
+            initInvoker('W');
+        }
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        window.addEventListener('getArguments', function (e) {
+            type = e.detail;
+            if(type === 'W'){
+                ObtieneArgumentosParaFirmaDesdeLaWeb(); // Llama a getArguments al terminar.
+            }else if(type === 'L'){
+                ObtieneArgumentosParaFirmaDesdeArchivoLocal(); // Llama a getArguments al terminar.
+            }
+        });
+        function getArguments(){
+            arg = document.getElementById("argumentos").value;
+            console.log("arg",arg);
+            dispatchEventClient('sendArguments', arg);
+        }
+
+        window.addEventListener('invokerOk', function (e) {
+            type = e.detail;
+            if(type === 'W'){
+                MiFuncionOkWeb();
+            }else if(type === 'L'){
+                MiFuncionOkLocal();
+            }
+        });
+
+        window.addEventListener('invokerCancel', function (e) {
+            MiFuncionCancel();
+        });
+
+
+        function ObtieneArgumentosParaFirmaDesdeLaWeb(){
+           // document.getElementById("signedDocument").href="#";
+            $.get("/restceropapel/firma/getArguments/"+document.getElementById("nombreArchivo").value, {}, function(data, status) {
+                documentName_ = data;
+                //Obtiene argumentos
+                $.post("/restceropapel/firma/getArguments", {
+                    type : "W",
+                    documentName : documentName_
+                    /*,
+                    usuario: document.getElementById("usuario").value,
+                    idfirma: document.getElementById("idfirma").value*/
+                }, function(data, status) {
+                    console.log("Data: " + data + "\nStatus: " + status);
+                    document.getElementById("argumentos").value = data;
+                    getArguments();
+                });
+
+            });
+        }
+
+        function ObtieneArgumentosParaFirmaDesdeArchivoLocal(){
+            document.getElementById("signedDocument").href="#";
+            $.get("argumentsServlet", {}, function(data, status) {
+                documentName_ = data;
+                //Obtiene argumentos
+                $.post("argumentsServlet", {
+                    type : "L",
+                    documentName : documentName_
+                }, function(data, status) {
+                    //alert("Data: " + data + "\nStatus: " + status);
+                    document.getElementById("argumentos").value = data;
+                    getArguments();
+                });
+
+            });
+
+        }
+
+        function MiFuncionOkWeb(){
+            window.parent.postMessage('exito', '*');
+            window.parent.postMessage('close', '*');
+            alert("Documento firmado desde una URL correctamente.");
+            document.getElementById("signedDocument").href="getFileServlet?documentName=" + documentName_;
+        }
+
+        function MiFuncionOkLocal(){
+            window.parent.postMessage('close', '*');
+            alert("Documento firmado desde la PC correctamente.");
+            document.getElementById("signedDocument").href="getFileServlet?documentName=" + documentName_;
+        }
+
+        function MiFuncionCancel(){
+            window.parent.postMessage('close', '*');
+            alert("El proceso de firma digital fue cancelado.");
+            document.getElementById("signedDocument").href="#";
+        }
+
+        //]]>
+    </script>
+    <style type="text/css">
+        footer{
+            background-color: #222222;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            text-align: center;
+            color: #CCC;
+        }
+
+        footer p {
+            padding: 14px;
+            margin: 0px;
+            line-height: 100%;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <input type="hidden" id="argumentos" value="" />
+    <div id="addComponent"></div>
+    <input type="hidden" id="nombreArchivo"  name="nombreArchivo" th:value="${nombreArchivo}"/>
+</div>
+</body>
+</html>

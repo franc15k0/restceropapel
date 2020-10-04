@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gob.pe.minam.restceropapel.security.repository.ISesionMapper">
+
+    <resultMap id="sesionCursorResult" type="Sesion" >
+        <result column="ID_ULTIMO" property="idSesion"/>
+    </resultMap>
+    <parameterMap id="sesionPara" type="Sesion">
+        <parameter property="smacaddress" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="sversionmodulo" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="idUsuario" jdbcType="NUMERIC" mode="IN" />
+        <parameter property="idSistema" jdbcType="VARCHAR" mode="IN" />
+        <parameter property="sipaddress" jdbcType="VARCHAR" mode="IN" />
+        <parameter property="sappserver" jdbcType="VARCHAR"  mode="IN"/>
+        <parameter property="susuariored" jdbcType="VARCHAR"  mode="IN"/>
+        <parameter property="ssistoperativo" jdbcType="VARCHAR"  mode="IN"/>
+        <parameter property="linkAplicativo" jdbcType="VARCHAR"  mode="IN"/>
+        <parameter property="idSesionCursor"  jdbcType="CURSOR" mode="OUT" resultMap="sesionCursorResult"/>
+    </parameterMap>
+
+    <resultMap id="parametroCursorResult" type="Parametro" >
+        <result column="SVALOR" property="svalor"/>
+    </resultMap>
+    <parameterMap id="parametroPara" type="Parametro">
+        <parameter property="snombre" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="valorCursor"  jdbcType="CURSOR" mode="OUT" resultMap="parametroCursorResult"/>
+    </parameterMap>
+
+
+    <select id="spBuscarParametroSesion" parameterMap="parametroPara" statementType="CALLABLE">
+        { CALL
+             BD_MINAM.USP_BUSCAR_PARAMETRO(?,?)
+        }
+    </select>
+    <select id="spInsertSesion" parameterMap="sesionPara" statementType="CALLABLE">
+        { CALL
+             BD_MINAM.USP_INSERTAR_SESION(?,?,?,?,?,?,?,?,?,?)
+        }
+    </select>
+</mapper>

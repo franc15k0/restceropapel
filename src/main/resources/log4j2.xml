@@ -1,0 +1,50 @@
+<Configuration  status="warn" name="ovauthoriza" packages="">
+    <Appenders>
+        <RollingFile name="File" fileName="${sys:jboss.server.log.dir}/ceropapel.log"
+                     filePattern="${sys:jboss.server.log.dir}/log-ceropapel-$${date:MM-yyyy}/ceropapel-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="%d{yyyy-MMM-dd HH:mm:ss a} [%t] %-5level %logger{36} - %msg%n" />
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="30 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+        <!-- Console Appender -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MMM-dd HH:mm:ss a} [%t] %-5level %logger{36} - %msg%n" />
+        </Console>
+
+    </Appenders>
+
+    <Loggers>
+
+        <!-- Log everything in custom package -->
+        <Logger name="gob.pe.minam" level="error" additivity="false" >
+             <AppenderRef ref="Console" />
+            <AppenderRef ref="File" />
+        </Logger>
+
+        <!-- Log everything in Spring Boot -->
+        <Logger name="org.springframework.boot" level="warn" additivity="false">
+             <!--<AppenderRef ref="Console" />-->
+            <AppenderRef ref="File" />
+        </Logger>
+
+        <!-- Log everything in Spring Core -->
+        <Logger name="org.springframework.core" level="warn" additivity="false">
+           <!--  <AppenderRef ref="Console" />-->
+            <AppenderRef ref="File" />
+        </Logger>
+        <!-- Log everything in Spring Security -->
+        <Logger name="org.springframework.security" level="warn" additivity="false">
+             <!--<AppenderRef ref="Console" />-->
+            <AppenderRef ref="File" />
+        </Logger>
+
+        <Root level="error">
+             <!--<AppenderRef ref="Console" />-->
+            <AppenderRef ref="File" />
+        </Root>
+
+    </Loggers>
+</Configuration>

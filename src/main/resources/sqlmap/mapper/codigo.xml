@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gob.pe.minam.restceropapel.api.repository.ICompendioMapper">
+
+    <resultMap id="detalleCompendioCortoResult" type="DetalleCompendio">
+        <result column="COD_ELEMENTO_TABLA" property="codElementoTabla" />
+        <result column="TXT_DESCRIPCION_CORTA" property="txtDescripcionCorta" />
+        <result column="TXT_REFERENCIA_1" property="txtReferencia1" />
+        <result column="TXT_REFERENCIA_2" property="txtReferencia2" />
+        <result column="TXT_REFERENCIA_ECODOC" property="txtReferenciaEcodoc" />
+    </resultMap>
+    <resultMap id="detalleCompendioLargaResult"   type="DetalleCompendio">
+        <result column="COD_ELEMENTO_TABLA" property="codElementoTabla" />
+        <result column="TXT_DESCRIPCION_CODIGO" property="txtDescripcionCodigo" />
+    </resultMap>
+    <parameterMap id="detalcompenCortoParametro" type="DetalleCompendio">
+        <parameter property="idTabla" jdbcType="INTEGER" mode="IN"  />
+        <parameter property="listDetalle" jdbcType="CURSOR" mode="OUT" resultMap="detalleCompendioCortoResult"  />
+    </parameterMap>
+    <parameterMap id="detalcompenLargoParametro" type="DetalleCompendio">
+        <parameter property="idTabla" jdbcType="INTEGER" mode="IN"  />
+        <parameter property="listDetalle" jdbcType="CURSOR" mode="OUT" resultMap="detalleCompendioLargaResult"  />
+    </parameterMap>
+    <select id="spListDetalleCompendiosCorto" parameterMap="detalcompenCortoParametro" statementType="CALLABLE">
+        {CALL BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_GET_DETALCOMPEN_CORTO(?, ?)}
+    </select>
+    <select id="spListDetalleCompendiosLarga" parameterMap="detalcompenLargoParametro" statementType="CALLABLE">
+        {CALL BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_GET_DETALCOMPEN_LARGO(?, ?)}
+    </select>
+
+
+
+
+</mapper>

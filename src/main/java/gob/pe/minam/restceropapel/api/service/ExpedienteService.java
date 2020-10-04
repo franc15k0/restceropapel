@@ -1,0 +1,144 @@
+package gob.pe.minam.restceropapel.api.service;
+
+import gob.pe.minam.restceropapel.api.model.*;
+import gob.pe.minam.restceropapel.api.repository.*;
+import gob.pe.minam.restceropapel.security.entity.Sesion;
+import gob.pe.minam.restceropapel.security.service.IUsuarioService;
+import gob.pe.minam.restceropapel.util.Constante;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service
+public class ExpedienteService implements  IExpedienteService {
+    @Autowired
+    IDocumentoMapper iDocumentoMapper;
+    @Autowired
+    IArchivoMapper iArchivoMapper;
+    @Autowired
+    IRegistroMapper iRegistroMapper;
+    @Autowired
+    INotificacionMapper iNotificacionMapper;
+    @Autowired
+    ICiudadanoService ciudadanoService;
+    @Autowired
+    IReporteMapper iReporteMapper;
+    @Autowired
+    private IUploadFileService uploadService;
+    @Value("${file.upload-dir}")
+    String uploadDir;
+
+    @Autowired
+    private IUsuarioService usuarioService;
+
+    public String cargarExpedienteCeroPapel(Expediente expediente){
+        String resultado;
+        try {
+            expediente.setSesion(usuarioService.obtenerSesion(expediente.getUsuario().getIdUsuario()));
+            expediente.getRegistro().setCodTestaTrami(Constante.TABLA_ESTADO);
+            expediente.getRegistro().setCodEestaTrami(Constante.ESTADO_REGISTRADO);
+            expediente.getRegistro().setCodTorgano(Constante.TABLA_ORGANO);
+            expediente.getRegistro().setIdSesionMod(expediente.getSesion().getIdSesion());
+            expediente.getRegistro().setIdSesionReg(expediente.getSesion().getIdSesion());
+            iRegistroMapper.spInsertRegistro(expediente.getRegistro());
+            expediente.getDocumento().setCodTtipoDocumento(Constante.TABLA_DOCUMENTO);
+            expediente.getDocumento().setIdRegistro(expediente.getRegistro().getIdRegistro());
+            expediente.getDocumento().setIdSesionMod(expediente.getSesion().getIdSesion());
+            expediente.getDocumento().setIdSesionReg(expediente.getSesion().getIdSesion());
+            iDocumentoMapper.spInsertDocumento(expediente.getDocumento());
+            expediente.getArchivos().forEach(a -> insertarArchivo(a, expediente));
+            resultado = "Se Grabo con exito el expediente";
+        }catch (Exception ex){
+            ex.printStackTrace();
+            resultado = "Se presento un error";
+        }
+
+        return resultado;
+    }
+    public void  insertarArchivo(Archivo archivo, Expediente expediente) {
+        archivo.setCodTsustDocumento(Constante.TABLA_SUSTENTO);
+        archivo.setIdDocumento(expediente.getDocumento().getIdDocumento());
+        archivo.setTxtRutaLocal(uploadDir);
+        archivo.setIdSesionMod(expediente.getSesion().getIdSesion());
+        archivo.setIdSesionReg(expediente.getSesion().getIdSesion());
+        iArchivoMapper.spInsertArchivo(archivo);
+    }
+    public Expediente buscarExpediente(Long idregistro) {
+        Registro registro = Registro.builder().idRegistro(idregistro).build();
+        iRegistroMapper.spBuscarRegistro(registro);
+        System.out.println("flgdeclaracionjurada:"+registro.getFlgDeclaracionJurada());
+        Documento documento = Documento.builder().idRegistro(idregistro).build();
+        iDocumentoMapper.spBuscarDocumento(documento);
+        Archivo archivoP = Archivo.builder().idDocumento(documento.getIdDocumento()).build();
+        iArchivoMapper.spBuscarAchivos(archivoP);
+        List<Archivo> archivoList = archivoP.getListArchivos();
+        return Expediente
+                .builder()
+                .Registro(registro)
+                .documento(documento)
+                .archivos(archivoList)
+                .build();
+    }
+    public Registro actualizarExpediente(Expediente expediente) {
+        expediente.setSesion(usuarioService.obtenerSesion(expediente.getUsuario().getIdUsuario()));
+        expediente.getRegistro().setIdSesionMod(expediente.getSesion().getIdSesion());
+        iRegistroMapper.spActualizarRegistroEdicion(expediente.getRegistro());
+        expediente.getDocumento().setIdSesionMod(expediente.getSesion().getIdSesion());
+        iDocumentoMapper.spActualizarDocumento(expediente.getDocumento());
+        expediente.getArchivos().forEach(a -> procesarArchivo(a, expediente));
+        return expediente.getRegistro();
+    }
+    public void procesarArchivo(Archivo archivo, Expediente expediente) {
+        if(archivo.getAccion()!=null){
+            archivo.setIdDocumento(expediente.getDocumento().getIdDocumento());
+           if(archivo.getAccion().equals(Constante.ELIMINAR_ARCHIVO)){
+               try{
+                   uploadService.eliminar(archivo.getTxtNombreArchivo());
+                   iArchivoMapper.spEliminarArchivo(archivo);
+               }catch (Exception ex){
+                ex.printStackTrace();
+               }
+            }else if(archivo.getAccion().equals(Constante.INSERTAR_ARCHIVO)){
+               insertarArchivo(archivo,expediente);
+            }
+        }
+    }
+
+    public List<Reporte> lstReporte(Reporte filtro){
+        iReporteMapper.spLstReporte(filtro);
+        return filtro.getListReporte();
+    }
+    public List<Registro> listExpedienteBandeja(Registro registro){
+        iRegistroMapper.spListExpedienteBandeja(registro);
+        /*return iRegistroMapper.listExpedienteBandeja(registro);*/
+        return registro.getListRegistros();
+    }
+    public List<Notificacion> listaNotificacion(Notificacion notificacion){
+        Ciudadano ciudadano = ciudadanoService.getCiudadanoId(notificacion.getIdCiudadano()).get();
+        notificacion.setIdPerNatural(ciudadano.getIdNatural());
+        notificacion.setIdPerJuridica(ciudadano.getIdJuridica());
+        iNotificacionMapper.spListarNotificacion(notificacion);
+        List<Notificacion> listNotificacion = notificacion.getListNotificacion();
+        Sesion sesion= new Sesion();
+        if(listNotificacion.size()>0){
+            sesion = usuarioService.obtenerSesion(notificacion.getIdUsuario());
+        }
+        Sesion finalSesion = sesion;
+        listNotificacion.forEach(n ->{
+            iRegistroMapper.spActualizarRegistroExp(Registro
+                    .builder()
+                    .idSesionMod(finalSesion.getIdSesion())
+                    .idRegistro(n.getIdRegistro())
+                    .idExpediente(n.getIdExpediente())
+                    .codEestaTrami((n.getEstadoNotificacion().equals(Constante.NOTIFICADO))?Constante.CODIGO_NOTFICADO:Constante.CODIGO_RECHAZADO)
+                    .build());
+        });
+        return listNotificacion;
+    }
+    public List<ArchivoNotificacion> listarArchivosNotificacion(ArchivoNotificacion archivoNotificacion){
+        iNotificacionMapper.spListarArchivosNotificacion(archivoNotificacion);
+        return archivoNotificacion.getListArchivoNotificacion();
+    }
+
+}
