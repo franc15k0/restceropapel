@@ -26,6 +26,10 @@ target/
 /nbdist/
 /.nb-gradle/
 build/
-
+##
+/${sys:jboss.server.log.dir}
+${sys:jboss.server.log.dir}
+/${sys_jboss.server.log.dir}
+${sys_jboss.server.log.dir}
 ### VS Code ###
 .vscode/
