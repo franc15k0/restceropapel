@@ -164,6 +164,7 @@
 				<version>2.1.0.Beta1</version>
 				<configuration>
 					<jboss-home>/home/fbazan/redhat/Wildfly-15</jboss-home>
+					<!--<jboss-home>D:/ArauzoConsult/wildfly-15.0.1.Final</jboss-home>-->
 					<username>admin01</username>
 					<password>Admin7$</password>
 					<hostname>localhost</hostname>
