@@ -1,0 +1,32 @@
+<configuration scan="true" scanPeriod="30 seconds" >
+    <springProperty scope="context" name="LOG_PATH" source="logging.path"/>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.out</target>
+        <encoder>
+            <pattern>[%p] %d [%c{1}] - %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/log_cero_papel.log</file>
+
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logFile.%d{yyyy-MM-dd}.log</fileNamePattern>
+        </rollingPolicy>
+        <append>true</append>
+        <encoder>
+            <pattern>[%p] %d [%c] - %m%n</pattern>
+        </encoder>
+    </appender>
+
+
+
+
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+
+    </root>
+</configuration>

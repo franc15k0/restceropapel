@@ -1,11 +1,13 @@
 package gob.pe.minam.restceropapel.api.service;
 
 
+import gob.pe.minam.restceropapel.api.controller.RestControllerExpediente;
 import gob.pe.minam.restceropapel.util.FileStorageException;
 import gob.pe.minam.restceropapel.util.FileStorageProperties;
 import gob.pe.minam.restceropapel.util.PasswordGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -24,8 +26,7 @@ import java.util.UUID;
 
 @Service
 public class UploadFileService implements  IUploadFileService{
-    /*private final Logger log = LoggerFactory.getLogger(UploadFileService.class);*/
-    private static final Logger log = LogManager.getLogger(UploadFileService.class);
+    private org.slf4j.Logger logger = LoggerFactory.getLogger(UploadFileService.class);
     private Path fileStorageLocation;
     private Path fileStorageLocationEcodoc;
 
@@ -47,7 +48,7 @@ public class UploadFileService implements  IUploadFileService{
 
         String nombreArchivo = "["+PasswordGenerator.generateCodigoFiles()+"] - "+archivo.getOriginalFilename().replace(" ","");
         Path targetLocation = this.fileStorageLocation.resolve(nombreArchivo);
-        System.out.println(targetLocation.toString());
+        logger.info(targetLocation.toString());
         Files.copy(archivo.getInputStream(), targetLocation);
         return nombreArchivo;
     }
@@ -73,19 +74,19 @@ public class UploadFileService implements  IUploadFileService{
     public Resource cargar(String nombreArchivo) throws MalformedURLException {
 
         Path rutaArchivo = this.fileStorageLocation.resolve(nombreArchivo).toAbsolutePath();
-        log.info(rutaArchivo.toString());
+        logger.info(rutaArchivo.toString());
 
         Resource recurso = new UrlResource(rutaArchivo.toUri());
 
         if(!recurso.exists() && !recurso.isReadable()) {
-            log.error("Error no se pudo cargar El archivo: " + nombreArchivo);
+            logger.error("Error no se pudo cargar El archivo: " + nombreArchivo);
         }
         return recurso;
     }
    public ByteArrayInputStream cargarFileFirma(String nombreArchivo) throws MalformedURLException, IOException{
 
         Path rutaArchivo = this.fileStorageLocation.resolve(nombreArchivo).toAbsolutePath();
-        log.info(rutaArchivo.toString());
+       logger.info(rutaArchivo.toString());
         byte[] content= Files.readAllBytes(rutaArchivo);
         return new ByteArrayInputStream(content);
     }

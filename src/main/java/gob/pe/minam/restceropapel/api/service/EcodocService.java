@@ -3,7 +3,10 @@ package gob.pe.minam.restceropapel.api.service;
 import gob.pe.minam.restceropapel.api.model.*;
 import gob.pe.minam.restceropapel.api.repository.*;
 import gob.pe.minam.restceropapel.util.Constante;
+import gob.pe.minam.restceropapel.util.HandledException;
 import gob.pe.minam.restceropapel.util.PasswordGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,7 @@ import java.util.Optional;
 
 @Service
 public class EcodocService implements IEcodocService{
+    private Logger logger = LoggerFactory.getLogger(ExpedienteService.class);
     @Autowired
     IEcodocMapper ecodocMapper;
     @Autowired
@@ -25,8 +29,6 @@ public class EcodocService implements IEcodocService{
     IArchivoMapper archivoMapper;
     @Autowired
     IDocumentoMapper documentoMapper;
-    /*@Autowired
-    IFirmaDigitalMapper iFirmaDigitalMapper;*/
     @Autowired
     private IUploadFileService uploadService;
     @Autowired
@@ -36,8 +38,9 @@ public class EcodocService implements IEcodocService{
     public String getParametro(List<DetalleCompendio> parametros, String filter){
         return parametros.stream().filter(p -> filter.equals(p.getCodElementoTabla())).findAny().get().getTxtReferenciaEcodoc();
     }
-    @Transactional(readOnly=true)
-    public ExpedienteEdoc enviarExpedienteEcodoc(Expediente expedienteCP){
+
+    @Transactional(rollbackFor={Exception.class})
+    public ExpedienteEdoc enviarExpedienteEcodoc(Expediente expedienteCP) throws HandledException {
 
         ClienteEdoc cliente =
                 buscarCliente(expedienteCP.getClienteEdoc())
@@ -155,11 +158,7 @@ public class EcodocService implements IEcodocService{
                     .build();
             ecodocMapper.spInsertArchivoEco(archivoEdoc);
         }catch (Exception e){
-            System.out.println("insertarArchivoEcodoc");
-            //System.out.println(e.getMessage());
-            System.out.println(e);
-            e.printStackTrace();
-            //e.getMessage();
+            logger.error(e.getMessage());
         }
 
     }

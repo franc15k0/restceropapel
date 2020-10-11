@@ -1,5 +1,6 @@
 package gob.pe.minam.restceropapel.security.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import gob.pe.minam.restceropapel.api.model.*;
 
 import gob.pe.minam.restceropapel.api.repository.IUbigeoMapper;
@@ -97,67 +98,68 @@ public class UsuarioService implements  IUsuarioService, UserDetailsService{
     }
 
     @Transactional(rollbackFor={Exception.class})
-    public Usuario insertUsuario(Usuario usuario)  {
+    public Usuario insertUsuario(Usuario usuario) throws HandledException {
         if(getUsuarioExterno(usuario.getUsuario()).isPresent()){
             usuario.setResultado("El Usuario ya existe");
             return usuario;
 
         }
-        PasswordEncoder encoder = new BCryptPasswordEncoder();
-        List<DetalleCompendio> roles = iCodigoService.getMapDetalleCompendiosCorto(Constante.CODIGO_ROLES);
-        Sesion session = obtenerParametroRegistroUsuario();
-        usuario.setContracena(encoder.encode(usuario.getContracena()));
-        usuario.setEstadoRegistro("I");
-        usuario.setTipo("1");
-        usuario.setEstadoRegistro("I");
-        usuario.setIdSesionReg(session.getIdSesion());
-        usuario.setCambioClave("0");
-        usuario.setIdRol((usuario.getIdTipoDocumento()
-                .equals(Constante.ES_PERSONANATURAL))?
-                roles.stream().filter(r -> Constante.NOMBRE_ROL_NATURAL.equals(r.getTxtDescripcionCorta())).findAny().get().getTxtReferencia1():
-                roles.stream().filter(r -> Constante.NOMBRE_ROL_JURIDICA.equals(r.getTxtDescripcionCorta())).findAny().get().getTxtReferencia1());
-        usuario.setNumeroDocumento(usuario.getUsuario());
-        usuarioMapper.spInsertUsuario(usuario);
-       Ciudadano ciudadanoCargado =  ciudadanoService.getCiudadanoNroDocumento(usuario.getIdTipoDocumento(),usuario.getUsuario()).orElseGet(() -> {
-            Ciudadano ciudadano = new Ciudadano();
-            if(usuario.getIdTipoDocumento().equals(Constante.ES_PERSONANATURAL)){
-                PersonaNatural personaNatural = PersonaNatural
-                        .builder()
-                        .numDni(usuario.getUsuario())
-                        .txtApePaterno(usuario.getApellidoPaterno())
-                        .txtApeMaterno(usuario.getApellidoMaterno())
-                        .txtNombres(usuario.getNombres())
-                        .flgSexo(usuario.getFlgSexo())
-                        .fecNacimiento(usuario.getFecNacimiento())
-                        .idSesionMod(session.getIdSesion())
-                        .idSesionReg(session.getIdSesion())
-                        .build();
-                ciudadanoService.insertPersonaNatural(personaNatural);
-                ciudadano.setIdNatural(personaNatural.getIdNatural());
-                ciudadano.setIdUbigeoDomicilio(obtenerUbigeo(usuario.getTxtUbigeo()));
-            }else {
-                PersonaJuridica personaJuridica = PersonaJuridica
-                        .builder()
-                        .numRuc(usuario.getUsuario())
-                        .txtRazonSocial(usuario.getNombres())
-                        .numAsientoRegistral(usuario.getNumAsientoRegistral())
-                        .numPartidaElectronica(usuario.getNumPartidaElectronica())
-                        .idSesionMod(session.getIdSesion())
-                        .idSesionReg(session.getIdSesion())
-                        .build();
-                ciudadanoService.insertPersonaJuridica(personaJuridica);
-                ciudadano.setIdJuridica(personaJuridica.getIdJuridica());
-                ciudadano.setIdUbigeoDomicilio(Integer.parseInt(usuario.getUbigeo()));
-            }
-            ciudadano.setIdUsuario(usuario.getIdUsuario());
-            ciudadano.setTxtDireccion(usuario.getDireccion());
-            ciudadano.setNumTelefonoCelular(usuario.getTelefono1());
-            ciudadano.setTxtCorreoElectronico(usuario.getCorreo());
-            ciudadano.setIdSesionMod(session.getIdSesion());
-            ciudadano.setIdSesionReg(session.getIdSesion());
-            ciudadanoService.insertCiudadano(ciudadano);
-            return ciudadano;
-        });
+        try {
+            PasswordEncoder encoder = new BCryptPasswordEncoder();
+            List<DetalleCompendio> roles = iCodigoService.getMapDetalleCompendiosCorto(Constante.CODIGO_ROLES);
+            Sesion session = obtenerParametroRegistroUsuario();
+            usuario.setContracena(encoder.encode(usuario.getContracena()));
+            usuario.setEstadoRegistro("I");
+            usuario.setTipo("1");
+            usuario.setEstadoRegistro("I");
+            usuario.setIdSesionReg(session.getIdSesion());
+            usuario.setCambioClave("0");
+            usuario.setIdRol((usuario.getIdTipoDocumento()
+                    .equals(Constante.ES_PERSONANATURAL))?
+                    roles.stream().filter(r -> Constante.NOMBRE_ROL_NATURAL.equals(r.getTxtDescripcionCorta())).findAny().get().getTxtReferencia1():
+                    roles.stream().filter(r -> Constante.NOMBRE_ROL_JURIDICA.equals(r.getTxtDescripcionCorta())).findAny().get().getTxtReferencia1());
+            usuario.setNumeroDocumento(usuario.getUsuario());
+            usuarioMapper.spInsertUsuario(usuario);
+            Ciudadano ciudadanoCargado =  ciudadanoService.getCiudadanoNroDocumento(usuario.getIdTipoDocumento(),usuario.getUsuario()).orElseGet(() -> {
+                Ciudadano ciudadano = new Ciudadano();
+                if(usuario.getIdTipoDocumento().equals(Constante.ES_PERSONANATURAL)){
+                    PersonaNatural personaNatural = PersonaNatural
+                            .builder()
+                            .numDni(usuario.getUsuario())
+                            .txtApePaterno(usuario.getApellidoPaterno())
+                            .txtApeMaterno(usuario.getApellidoMaterno())
+                            .txtNombres(usuario.getNombres())
+                            .flgSexo(usuario.getFlgSexo())
+                            .fecNacimiento(usuario.getFecNacimiento())
+                            .idSesionMod(session.getIdSesion())
+                            .idSesionReg(session.getIdSesion())
+                            .build();
+                    ciudadanoService.insertPersonaNatural(personaNatural);
+                    ciudadano.setIdNatural(personaNatural.getIdNatural());
+                    ciudadano.setIdUbigeoDomicilio(obtenerUbigeo(usuario.getTxtUbigeo()));
+                }else {
+                    PersonaJuridica personaJuridica = PersonaJuridica
+                            .builder()
+                            .numRuc(usuario.getUsuario())
+                            .txtRazonSocial(usuario.getNombres())
+                            .numAsientoRegistral(usuario.getNumAsientoRegistral())
+                            .numPartidaElectronica(usuario.getNumPartidaElectronica())
+                            .idSesionMod(session.getIdSesion())
+                            .idSesionReg(session.getIdSesion())
+                            .build();
+                    ciudadanoService.insertPersonaJuridica(personaJuridica);
+                    ciudadano.setIdJuridica(personaJuridica.getIdJuridica());
+                    ciudadano.setIdUbigeoDomicilio(Integer.parseInt(usuario.getUbigeo()));
+                }
+                ciudadano.setIdUsuario(usuario.getIdUsuario());
+                ciudadano.setTxtDireccion(usuario.getDireccion());
+                ciudadano.setNumTelefonoCelular(usuario.getTelefono1());
+                ciudadano.setTxtCorreoElectronico(usuario.getCorreo());
+                ciudadano.setIdSesionMod(session.getIdSesion());
+                ciudadano.setIdSesionReg(session.getIdSesion());
+                ciudadanoService.insertCiudadano(ciudadano);
+                return ciudadano;
+            });
 
             usuario.setValido(Valido
                     .builder()
@@ -172,21 +174,29 @@ public class UsuarioService implements  IUsuarioService, UserDetailsService{
                     .build());
             usuarioMapper.spInsertUsuarioValid(usuario.getValido());
             usuario.getValido().setResultado("Se valido Correctamente");
-            System.out.println(usuario.getValido().getResultado());
-            System.out.println(usuario.getValido().getCodigo());
+            logger.info(usuario.getValido().getResultado());
+            logger.info(usuario.getValido().getCodigo()+"");
             enviarCorreo(usuario.getCorreo(),environment.getProperty("aplication.hostname")+"restceropapel/usuario/confirmacion-correo/"+Constante.FLG_NUEVO_USUARIO+"/"+usuario.getValido().getTokenFinal(), usuario.getNombres()+" "+usuario.getApellidoPaterno());
             enviarSMS(usuario.getTelefono1(),usuario.getValido().getCodigo());
 
-        usuario.setResultado(Optional.ofNullable(usuario.getResultado()).orElseGet(()->"Se ha presentado un error inesperado"));
+            usuario.setResultado(Optional.ofNullable(usuario.getResultado()).orElseGet(()->"Se ha presentado un error inesperado"));
+        } catch (Exception ex) {
+            logger.error(ex.getMessage());
+            throw new HandledException("Failed to register User", ex);
+        }
+
         return usuario;
     };
-    public void validate(Valido valido){
+
+    @Transactional(rollbackFor={Exception.class})
+    public void validate(Valido valido) throws HandledException {
         try{
             Sesion session = obtenerSesion(valido.getIdUsuario());
             valido.setIdSesionMod(session.getIdSesion());
             usuarioMapper.spModificarUserValid(valido);
-        }catch (Exception e){
-                  e.getMessage();
+        }catch (Exception ex){
+                  logger.error(ex.getMessage());
+                  throw new HandledException("Failed to register User", ex);
         }
     }
    public Optional<Usuario> getUsuarioExterno(String userName){
@@ -254,7 +264,7 @@ public class UsuarioService implements  IUsuarioService, UserDetailsService{
             sesion.setIdSesion(sesion.getIdSesionCursor().stream().findFirst().get().getIdSesion());
             return sesion;
         }catch (Exception e){
-            e.printStackTrace();
+           logger.error(e.getMessage());
             return null;
         }
 
@@ -294,7 +304,8 @@ public class UsuarioService implements  IUsuarioService, UserDetailsService{
             return uv;
         });
     }
-    public void spResetearContrasena(Usuario usuario){
+    @Transactional(rollbackFor={Exception.class})
+    public void spResetearContrasena(Usuario usuario) throws HandledException{
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         Sesion session = obtenerSesion(usuario.getIdUsuario());
         usuario.setIdSesionMod(session.getIdSesion());

@@ -7,6 +7,7 @@ import gob.pe.minam.restceropapel.security.entity.Sunat;
 import gob.pe.minam.restceropapel.security.entity.SunatWs;
 import gob.pe.minam.restceropapel.security.entity.Usuario;
 import gob.pe.minam.restceropapel.security.service.IUsuarioService;
+import gob.pe.minam.restceropapel.util.HandledException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,18 +51,19 @@ public class RestControllerUsuario {
     @PostMapping("/alta")
     public ResponseEntity<?> alta(@Valid @RequestBody Usuario usuario) {
         Map<String, Object> response = new HashMap<>();
-        usuarioService.insertUsuario(usuario);
-        return  Optional.ofNullable(usuario.getIdUsuario())
-                .map(b -> {
-                        response.put("mensaje", usuario.getResultado());
-                        response.put("usuario",usuario);
-                        return new ResponseEntity<Map<String, Object>>(response,HttpStatus.CREATED);
-                })
-                .orElseGet(() -> {
-                    response.put("mensaje","error interno!");
-                    response.put("error",usuario.getResultado());
-                    return new ResponseEntity<Map<String, Object>>(response,HttpStatus.CONFLICT);
-                });
+        try{
+            usuarioService.insertUsuario(usuario);
+            response.put("mensaje", usuario.getResultado());
+            response.put("usuario",usuario);
+            return new ResponseEntity<Map<String, Object>>(response,HttpStatus.CREATED);
+        } catch (HandledException e) {
+            logger.error(e.getMessage());
+            response.put("mensaje","error interno!");
+            response.put("error",usuario.getResultado());
+            return new ResponseEntity<Map<String, Object>>(response,HttpStatus.CONFLICT);
+        }
+
+
     }
     @GetMapping("/ubigeo/{padre}")
     @ResponseStatus(HttpStatus.OK)
@@ -87,7 +89,7 @@ public class RestControllerUsuario {
     @GetMapping("/regenerarsms/{token}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity regenerarSms(@PathVariable String token) {
-        System.out.println("jajaja______"+token);
+        logger.info("token____"+token);
         try{
             usuarioService.regenerarCodigoValidacion(token);
          }catch (Exception e){

@@ -6,18 +6,25 @@ import gob.pe.minam.restceropapel.api.model.PersonaNatural;
 import gob.pe.minam.restceropapel.api.repository.ICiudadanoMapper;
 import gob.pe.minam.restceropapel.security.entity.Sesion;
 import gob.pe.minam.restceropapel.security.service.IUsuarioService;
+import gob.pe.minam.restceropapel.util.HandledException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class CiudadanoService implements ICiudadanoService {
+    private Logger logger = LoggerFactory.getLogger(ExpedienteService.class);
     @Autowired
     ICiudadanoMapper iCiudadanoMapper;
     @Autowired
     private IUsuarioService usuarioService;
+
 
     public List<Ciudadano> getCiudadanoRepresentanteLegal(Long idCiudadano){
         AtomicReference<List<Ciudadano>> representantes = new AtomicReference<>();
@@ -44,8 +51,10 @@ public class CiudadanoService implements ICiudadanoService {
             return c;
         });
     }
-    public Ciudadano grabarRepresentanteLegal(Ciudadano ciudadano){
-            Sesion sesion =  usuarioService.obtenerSesion(ciudadano.getIdUsuario());
+    @Transactional(rollbackFor={Exception.class})
+    public Ciudadano grabarRepresentanteLegal(Ciudadano ciudadano)throws HandledException {
+        try {
+        Sesion sesion =  usuarioService.obtenerSesion(ciudadano.getIdUsuario());
         PersonaNatural personaNatural = PersonaNatural
                 .builder()
                 .numDni(ciudadano.getNumDni())
@@ -72,11 +81,16 @@ public class CiudadanoService implements ICiudadanoService {
         iCiudadanoMapper.spQuitarRepresentates(ciudadanoJuridico);
         ciudadanoJuridico.setIdNatural(personaNatural.getIdNatural());
         iCiudadanoMapper.spAsignarRepresentanteLegal(ciudadanoJuridico);
+        }catch (Exception ex){
+            logger.error(ex.getMessage());
+            throw new HandledException("Failed to register grabarRepresentanteLegal", ex);
+        }
 
         return ciudadano;
 
     }
-    public Ciudadano asignarRepresentanteLegal(Ciudadano ciudadano){
+    @Transactional(rollbackFor={Exception.class})
+    public Ciudadano asignarRepresentanteLegal(Ciudadano ciudadano)throws HandledException{
         Sesion sesion =  usuarioService.obtenerSesion(ciudadano.getIdUsuario());
         Ciudadano ciudadanoJuridico = getCiudadanoId(ciudadano.getIdCiudadanoEmpresa()).get();
         ciudadanoJuridico.setIdSesionMod(sesion.getIdSesion());

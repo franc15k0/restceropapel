@@ -1,5 +1,8 @@
 package gob.pe.minam.restceropapel.config;
 
+import gob.pe.minam.restceropapel.api.controller.RestControllerExpediente;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -25,7 +28,7 @@ import java.util.Arrays;
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
-
+    private Logger logger = LoggerFactory.getLogger(AuthorizationServerConfig.class);
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
@@ -78,8 +81,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
             @Override
             public ResponseEntity<OAuth2Exception> translate(Exception e) throws Exception {
                 // This is the line that prints the stack trace to the log. You can customise this to format the trace etc if you like
-                e.printStackTrace();
-
+                logger.error(e.getMessage());
                 // Carry on handling the exception
                 ResponseEntity<OAuth2Exception> responseEntity = super.translate(e);
                 HttpHeaders headers = new HttpHeaders();

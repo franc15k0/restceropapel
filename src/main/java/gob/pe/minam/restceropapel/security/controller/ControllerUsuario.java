@@ -1,9 +1,13 @@
 package gob.pe.minam.restceropapel.security.controller;
 
+import gob.pe.minam.restceropapel.api.controller.RestControllerExpediente;
 import gob.pe.minam.restceropapel.security.entity.Password;
 import gob.pe.minam.restceropapel.security.entity.Usuario;
 import gob.pe.minam.restceropapel.security.entity.Valido;
 import gob.pe.minam.restceropapel.security.service.IUsuarioService;
+import gob.pe.minam.restceropapel.util.HandledException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
@@ -23,6 +27,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @Controller
 public class ControllerUsuario {
+    private Logger logger = LoggerFactory.getLogger(ControllerUsuario.class);
     @Autowired
     IUsuarioService usuarioService;
     @Autowired
@@ -47,8 +52,8 @@ public class ControllerUsuario {
     }
 
     @PostMapping("/usuario/validation-codigo")
-    public String validation(@Valid Valido valido, Model model) {
-        System.out.println(valido.getToken().replaceAll("[^0-9]", ""));
+    public String validation(@Valid Valido valido, Model model) throws HandledException {
+        //System.out.println(valido.getToken().replaceAll("[^0-9]", ""));
         AtomicReference<String> vista = new AtomicReference<>("");
         Long idUsuario = Long.parseLong(valido.getToken().replaceAll("[^0-9]", ""));
         if(valido.getFlgAccionUsuario().equals("0")){
@@ -90,7 +95,8 @@ public class ControllerUsuario {
         usuarioService.spResetearContrasena(usuario);
 
         model.addAttribute("resultado", "1");
-        }catch (Exception e) {
+        }catch (HandledException e) {
+            logger.error(e.getMessage());
             model.addAttribute("resultado", "0");;
         }
         return "cambiarClave";

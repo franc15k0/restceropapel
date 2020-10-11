@@ -1,6 +1,9 @@
 package gob.pe.minam.restceropapel.config;
 
+
 import gob.pe.minam.restceropapel.util.Property;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.AuthenticationException;
 
 import javax.naming.Context;
@@ -10,7 +13,7 @@ import javax.naming.directory.InitialDirContext;
 import java.util.Hashtable;
 
 public class LdapConfig {
-
+    private Logger logger = LoggerFactory.getLogger(LdapConfig.class);
 
 
     private static String LDAP_CONTEXT_FACTORY = "";
@@ -28,7 +31,7 @@ public class LdapConfig {
             DOMINIO_MAIL = Property.getInstance().getValorCp("ldap.domain");
             env.put(Context.INITIAL_CONTEXT_FACTORY, LDAP_CONTEXT_FACTORY);
             env.put(Context.SECURITY_AUTHENTICATION, LDAP_SECURITY_AUTHENTICATION);
-            env.put(Context.PROVIDER_URL,LDAP_PROVIDER_URL);
+           // env.put(Context.PROVIDER_URL,LDAP_PROVIDER_URL);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -53,10 +56,10 @@ public class LdapConfig {
 
         } catch (AuthenticationException e)
 			{
-                System.out.println(e.getMessage());
+                logger.error(e.getMessage());
 			}
 			catch (Exception e) {
-                System.out.println(e.getMessage());
+                logger.error(e.getMessage());
         } finally {
 				if (ctx != null) {
 					try {

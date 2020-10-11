@@ -39,7 +39,7 @@
          )
         }
     </select>
-    <select id="spInsertRegistro" parameterType="Registro" statementType="CALLABLE">
+    <insert id="spInsertRegistro" parameterType="Registro" statementType="CALLABLE">
         { CALL
         BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_INSERT_REGISTRO(
             #{idExpediente, mode=IN, jdbcType=NUMERIC},
@@ -58,10 +58,10 @@
             #{resultado, mode=OUT, jdbcType=VARCHAR}
             )
         }
-    </select>
+    </insert>
     <select id="spActualizarRegistroExp" parameterType="Registro" statementType="CALLABLE">
       { CALL
-         BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_ACTUALIZAR_REGISTRO_EXP(
+             BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_ACTUALIZAR_REGISTRO_EXP(
          #{idRegistro, mode=IN, jdbcType=VARCHAR},
          #{idExpediente, mode=IN, jdbcType=NUMERIC},
          #{codEestaTrami, mode=IN, jdbcType=VARCHAR},
@@ -74,7 +74,7 @@
     <select id="spListExpedienteBandeja" parameterMap="bandejaParametros" statementType="CALLABLE">
         {CALL BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_BANDEJA(?, ?, ?, ?, ?, ?, ?)}
     </select>
-    <select id="spActualizarRegistroEdicion" parameterType="Registro" statementType="CALLABLE">
+    <update id="spActualizarRegistroEdicion" parameterType="Registro" statementType="CALLABLE">
       { CALL
          BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_ACTUALIZAR_REGISTRO(
          #{idRegistro, mode=IN, jdbcType=VARCHAR},
@@ -84,5 +84,5 @@
          #{resultado, mode=OUT, jdbcType=VARCHAR}
          )
     }
-    </select>
+    </update>
 </mapper>

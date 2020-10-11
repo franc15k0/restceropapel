@@ -18,6 +18,7 @@ target/
 *.iws
 *.iml
 *.ipr
+*.log
 
 ### NetBeans ###
 /nbproject/private/
@@ -28,7 +29,6 @@ target/
 build/
 ##
 
-${sys:jboss.server.log.dir}/
-${sys_jboss.server.log.dir}/
+LOG_PATH_IS_UNDEFINED/
 ### VS Code ###
 .vscode/

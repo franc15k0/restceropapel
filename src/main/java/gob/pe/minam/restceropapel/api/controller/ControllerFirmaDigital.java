@@ -4,6 +4,8 @@ import gob.pe.minam.restceropapel.api.service.ICodigoService;
 import gob.pe.minam.restceropapel.api.service.IUploadFileService;
 import gob.pe.minam.restceropapel.security.entity.Valido;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -22,7 +24,7 @@ import java.io.*;
 @Controller
 @RequestMapping("/firma")
 public class ControllerFirmaDigital {
-
+    private static final Logger logger = LoggerFactory.getLogger(ControllerFirmaDigital.class);
     @Autowired
     private IUploadFileService uploadService;
     @Autowired
@@ -37,7 +39,7 @@ public class ControllerFirmaDigital {
     @RequestMapping(value="/descargarArchivo/{nombreArchivo}",method= RequestMethod.GET)
     public ResponseEntity<InputStreamResource> descargar(@PathVariable String nombreArchivo) throws Exception {
 
-        System.out.println("asas"+nombreArchivo);
+        logger.info("nombreArchivo:"+nombreArchivo);
         String cadenaNombreArchivo = codigoService.decodeHash(nombreArchivo);
         ByteArrayInputStream bis = uploadService.cargarFileFirma(cadenaNombreArchivo);
         HttpHeaders headers = new HttpHeaders();

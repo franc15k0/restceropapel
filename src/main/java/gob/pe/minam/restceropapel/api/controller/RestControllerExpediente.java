@@ -2,10 +2,12 @@ package gob.pe.minam.restceropapel.api.controller;
 import gob.pe.minam.restceropapel.api.model.*;
 import gob.pe.minam.restceropapel.api.service.*;
 import gob.pe.minam.restceropapel.util.Constante;
+import gob.pe.minam.restceropapel.util.HandledException;
 import org.apache.commons.codec.binary.Base64;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -20,12 +22,13 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.*;
 
+
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api")
 public class RestControllerExpediente {
-    /*final Logger logger = LoggerFactory.getLogger(RestControllerExpediente.class);*/
-    private static final Logger logger = LogManager.getLogger(RestControllerExpediente.class);
+    private static final Logger logger = LoggerFactory.getLogger(RestControllerExpediente.class);
+
     @Autowired
     IExpedienteService expedienteService;
     @Autowired
@@ -47,9 +50,9 @@ public class RestControllerExpediente {
         try{
             expedienteService.cargarExpedienteCeroPapel(expediente);
         }catch (Exception e){
+            logger.error(e.getMessage());
             response.put("mensaje","error al insertar data!");
             response.put("error","Se presento un Error al Insertar Data");
-            e.printStackTrace();
             return new ResponseEntity<Map<String, Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
         }
         logger.info("expediente.getRegistro().getIdRegistro()::"+expediente.getRegistro().getIdRegistro());
@@ -59,15 +62,15 @@ public class RestControllerExpediente {
     }
     @PutMapping("/expediente")
     public ResponseEntity<?> envio(@Valid @RequestBody Expediente expedienteCP) {
-        logger.info("registro::"+expedienteCP.getRegistro().getIdRegistro());
+
         Map<String, Object> response = new HashMap<>();
         ExpedienteEdoc expediente = null;
         try{
             expediente =  ecodocService.enviarExpedienteEcodoc(expedienteCP);
-        }catch (Exception e){
+        }catch (HandledException e){
+            logger.error(e.getMessage());
             response.put("mensaje","error al insertar data!");
             response.put("error","Se presento un Error al Insertar Data");
-            e.printStackTrace();
             return new ResponseEntity<Map<String, Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -87,9 +90,9 @@ public class RestControllerExpediente {
         try{
             expedienteService.actualizarExpediente(expediente);
         }catch (Exception e){
+            logger.error(e.getMessage());
             response.put("mensaje","error al insertar data!");
             response.put("error","Se presento un Error al Insertar Data");
-            e.printStackTrace();
             return new ResponseEntity<Map<String, Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
         }
         logger.info("expediente.getRegistro().getIdRegistro()::"+expediente.getRegistro().getIdRegistro());
@@ -116,7 +119,7 @@ public class RestControllerExpediente {
             } catch (IOException e) {
                 response.put("mensaje", "Error al subir el archivo del expediente");
                 response.put("error", e.getMessage());
-                e.printStackTrace();
+                logger.error(e.getMessage());
                 return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
             }
             response.put("nombreFinal", nombreArchivoFinal);
@@ -129,12 +132,12 @@ public class RestControllerExpediente {
 
     @GetMapping("/uploads/file/{nombreFile:.+}")
     public ResponseEntity<Resource> verArchivo(@PathVariable String nombreFile){
-        System.out.println("asas"+nombreFile);
+        logger.info("nombreFile:"+nombreFile);
         Resource recurso = null;
         try {
             recurso = uploadService.cargar(nombreFile);
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
 
         HttpHeaders cabecera = new HttpHeaders();
@@ -154,6 +157,7 @@ public class RestControllerExpediente {
         }catch (Exception e){
             response.put("mensaje","resultado de Busqueda de personal!");
             response.put("error","Internal Error");
+            logger.error(e.getMessage());
             return new ResponseEntity<Map<String, Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -171,6 +175,7 @@ public class RestControllerExpediente {
         }catch (Exception e){
             response.put("mensaje","resultado de Busqueda de personal!");
             response.put("error","Internal Error");
+            logger.error(e.getMessage());
             return new ResponseEntity<Map<String, Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -178,19 +183,6 @@ public class RestControllerExpediente {
         response.put("personal",listaPersonal);
         return new ResponseEntity<Map<String, Object>>(response,HttpStatus.OK);
     }
-/*    @GetMapping("/expediente/idfirma")
-    @ResponseStatus(HttpStatus.OK)
-    public Integer getIdFirma() {
-        return expedienteService.getFuncionIdFirma();
-    }*/
-
-/*
-    @GetMapping("/expediente/firma/{idfirma}")
-    @ResponseStatus(HttpStatus.OK)
-    public FirmaDigital getFirma(@PathVariable Integer idfirma) {
-        return expedienteService.buscarFirma(idfirma);
-    }
-*/
 
     @GetMapping("/expediente/representantelegal/{idCiudadano}")
     @ResponseStatus(HttpStatus.OK)
@@ -213,7 +205,7 @@ public class RestControllerExpediente {
         }catch (Exception e){
             response.put("mensaje","error al insertar data!");
             response.put("error","Se presento un Error al Insertar Data");
-            e.printStackTrace();
+            logger.error(e.getMessage());
             return new ResponseEntity<Map<String, Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -230,7 +222,7 @@ public class RestControllerExpediente {
         }catch (Exception e){
             response.put("mensaje","error al insertar data!");
             response.put("error","Se presento un Error al Insertar Data");
-            e.printStackTrace();
+            logger.error(e.getMessage());
             return new ResponseEntity<Map<String, Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -241,7 +233,7 @@ public class RestControllerExpediente {
 
     @GetMapping("/expediente/reporte")
     @ResponseStatus(HttpStatus.OK)
-    public List<Reporte> reporteFull() {
+    public List<Reporte> reporteFull() throws HandledException {
         return expedienteService.lstReporte(new Reporte());
     }
 
@@ -254,7 +246,7 @@ public class RestControllerExpediente {
         }catch (Exception e){
             response.put("mensaje","error al insertar data!");
             response.put("error","Se presento un Error");
-            e.printStackTrace();
+            logger.error(e.getMessage());
             return new ResponseEntity<Map<String, Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -271,7 +263,7 @@ public class RestControllerExpediente {
         }catch (Exception e){
             response.put("mensaje","error!");
             response.put("error","Se presento un Error");
-            e.printStackTrace();
+            logger.error(e.getMessage());
             return new ResponseEntity<Map<String, Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -288,7 +280,7 @@ public class RestControllerExpediente {
         }catch (Exception e){
             response.put("mensaje","error!");
             response.put("error","Se presento un Error");
-            e.printStackTrace();
+            logger.error(e.getMessage());
             return new ResponseEntity<Map<String, Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -301,7 +293,7 @@ public class RestControllerExpediente {
     @ResponseStatus(HttpStatus.OK)
     public List<ArchivoNotificacion> archivoNotificacion(@RequestParam("idExpediente") String idExpediente,
                                                          @RequestParam("idCiudadano") String idCiudadano
-    ) {
+    ) throws HandledException {
         List<ArchivoNotificacion> lstArchivoNotificacion  = expedienteService.listarArchivosNotificacion(ArchivoNotificacion
                 .builder()
                 .idExpediente(Integer.parseInt(idExpediente))
@@ -341,6 +333,7 @@ public class RestControllerExpediente {
         }catch (Exception e){
             response.put("mensaje","error!");
             response.put("error","Se presento un Error");
+            logger.error(e.getMessage());
             return new ResponseEntity<Map<String, Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
         }
 

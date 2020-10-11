@@ -23,7 +23,7 @@
   <select id="spBuscarAchivos" parameterMap="archivoParametro" statementType="CALLABLE">
         {CALL BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_GET_ARCHIVOS(?, ?)}
   </select>
-  <select id="spInsertArchivo" parameterType="Archivo" statementType="CALLABLE">
+  <insert id="spInsertArchivo" parameterType="Archivo" statementType="CALLABLE">
         { CALL
         BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_INSERT_ARCHIVO(
             #{codTsustDocumento, mode=IN, jdbcType=NUMERIC},
@@ -40,14 +40,15 @@
             #{resultado, mode=OUT, jdbcType=VARCHAR}
             )
         }
-    </select>
-    <select id="spEliminarArchivo" parameterType="Archivo" statementType="CALLABLE">
+    </insert>
+    <update id="spEliminarArchivo" parameterType="Archivo" statementType="CALLABLE">
       { CALL
          BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_ELIMINAR_ARCHIVO(
          #{idArchivo, mode=IN, jdbcType=NUMERIC},
+         #{idSesionMod, mode=IN, jdbcType=NUMERIC},
          #{resultado, mode=OUT, jdbcType=VARCHAR}
          )
        }
-    </select>
+    </update>
 
 </mapper>

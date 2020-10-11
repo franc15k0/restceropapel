@@ -4,14 +4,22 @@ import gob.pe.minam.restceropapel.api.model.*;
 import gob.pe.minam.restceropapel.api.repository.*;
 import gob.pe.minam.restceropapel.security.entity.Sesion;
 import gob.pe.minam.restceropapel.security.service.IUsuarioService;
+import gob.pe.minam.restceropapel.security.service.UsuarioService;
 import gob.pe.minam.restceropapel.util.Constante;
+import gob.pe.minam.restceropapel.util.HandledException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class ExpedienteService implements  IExpedienteService {
+    final Logger logger = LoggerFactory.getLogger(ExpedienteService.class);
     @Autowired
     IDocumentoMapper iDocumentoMapper;
     @Autowired
@@ -32,7 +40,8 @@ public class ExpedienteService implements  IExpedienteService {
     @Autowired
     private IUsuarioService usuarioService;
 
-    public String cargarExpedienteCeroPapel(Expediente expediente){
+    @Transactional(rollbackFor={Exception.class})
+    public String cargarExpedienteCeroPapel(Expediente expediente) throws HandledException {
         String resultado;
         try {
             expediente.setSesion(usuarioService.obtenerSesion(expediente.getUsuario().getIdUsuario()));
@@ -50,12 +59,13 @@ public class ExpedienteService implements  IExpedienteService {
             expediente.getArchivos().forEach(a -> insertarArchivo(a, expediente));
             resultado = "Se Grabo con exito el expediente";
         }catch (Exception ex){
-            ex.printStackTrace();
-            resultado = "Se presento un error";
+            logger.error(ex.getMessage());
+            throw new HandledException("Failed to register cargarExpedienteCeroPapel", ex);
         }
 
         return resultado;
     }
+
     public void  insertarArchivo(Archivo archivo, Expediente expediente) {
         archivo.setCodTsustDocumento(Constante.TABLA_SUSTENTO);
         archivo.setIdDocumento(expediente.getDocumento().getIdDocumento());
@@ -64,10 +74,11 @@ public class ExpedienteService implements  IExpedienteService {
         archivo.setIdSesionReg(expediente.getSesion().getIdSesion());
         iArchivoMapper.spInsertArchivo(archivo);
     }
+
     public Expediente buscarExpediente(Long idregistro) {
         Registro registro = Registro.builder().idRegistro(idregistro).build();
         iRegistroMapper.spBuscarRegistro(registro);
-        System.out.println("flgdeclaracionjurada:"+registro.getFlgDeclaracionJurada());
+        logger.info("flgdeclaracionjurada:"+registro.getFlgDeclaracionJurada());
         Documento documento = Documento.builder().idRegistro(idregistro).build();
         iDocumentoMapper.spBuscarDocumento(documento);
         Archivo archivoP = Archivo.builder().idDocumento(documento.getIdDocumento()).build();
@@ -80,13 +91,19 @@ public class ExpedienteService implements  IExpedienteService {
                 .archivos(archivoList)
                 .build();
     }
-    public Registro actualizarExpediente(Expediente expediente) {
+    @Transactional(rollbackFor={Exception.class})
+    public Registro actualizarExpediente(Expediente expediente) throws HandledException {
+        try {
         expediente.setSesion(usuarioService.obtenerSesion(expediente.getUsuario().getIdUsuario()));
         expediente.getRegistro().setIdSesionMod(expediente.getSesion().getIdSesion());
         iRegistroMapper.spActualizarRegistroEdicion(expediente.getRegistro());
         expediente.getDocumento().setIdSesionMod(expediente.getSesion().getIdSesion());
         iDocumentoMapper.spActualizarDocumento(expediente.getDocumento());
         expediente.getArchivos().forEach(a -> procesarArchivo(a, expediente));
+        } catch (Exception ex) {
+            logger.error(ex.getMessage());
+            throw new HandledException("Failed to register actualizarExpediente", ex);
+        }
         return expediente.getRegistro();
     }
     public void procesarArchivo(Archivo archivo, Expediente expediente) {
@@ -95,9 +112,10 @@ public class ExpedienteService implements  IExpedienteService {
            if(archivo.getAccion().equals(Constante.ELIMINAR_ARCHIVO)){
                try{
                    uploadService.eliminar(archivo.getTxtNombreArchivo());
+                   archivo.setIdSesionMod(expediente.getSesion().getIdSesion());
                    iArchivoMapper.spEliminarArchivo(archivo);
                }catch (Exception ex){
-                ex.printStackTrace();
+                logger.error(ex.getMessage());
                }
             }else if(archivo.getAccion().equals(Constante.INSERTAR_ARCHIVO)){
                insertarArchivo(archivo,expediente);
@@ -105,21 +123,33 @@ public class ExpedienteService implements  IExpedienteService {
         }
     }
 
-    public List<Reporte> lstReporte(Reporte filtro){
+    public List<Reporte> lstReporte(Reporte filtro) throws HandledException{
+        try {
         iReporteMapper.spLstReporte(filtro);
+        } catch (Exception ex) {
+            logger.error(ex.getMessage());
+            throw new HandledException("Failed to lstReporte", ex);
+        }
         return filtro.getListReporte();
     }
-    public List<Registro> listExpedienteBandeja(Registro registro){
+    public List<Registro> listExpedienteBandeja(Registro registro) throws HandledException{
+        try {
         iRegistroMapper.spListExpedienteBandeja(registro);
-        /*return iRegistroMapper.listExpedienteBandeja(registro);*/
+        } catch (Exception ex) {
+            logger.error(ex.getMessage());
+            throw new HandledException("Failed to listExpedienteBandeja", ex);
+        }
         return registro.getListRegistros();
     }
-    public List<Notificacion> listaNotificacion(Notificacion notificacion){
+    @Transactional(rollbackFor={Exception.class})
+    public List<Notificacion> listaNotificacion(Notificacion notificacion) throws HandledException{
+        List<Notificacion> listNotificacion = new ArrayList<>();
+        try {
         Ciudadano ciudadano = ciudadanoService.getCiudadanoId(notificacion.getIdCiudadano()).get();
         notificacion.setIdPerNatural(ciudadano.getIdNatural());
         notificacion.setIdPerJuridica(ciudadano.getIdJuridica());
         iNotificacionMapper.spListarNotificacion(notificacion);
-        List<Notificacion> listNotificacion = notificacion.getListNotificacion();
+        listNotificacion = notificacion.getListNotificacion();
         Sesion sesion= new Sesion();
         if(listNotificacion.size()>0){
             sesion = usuarioService.obtenerSesion(notificacion.getIdUsuario());
@@ -134,10 +164,19 @@ public class ExpedienteService implements  IExpedienteService {
                     .codEestaTrami((n.getEstadoNotificacion().equals(Constante.NOTIFICADO))?Constante.CODIGO_NOTFICADO:Constante.CODIGO_RECHAZADO)
                     .build());
         });
+        } catch (Exception ex) {
+            logger.error(ex.getMessage());
+            throw new HandledException("Failed to listaNotificacion", ex);
+        }
         return listNotificacion;
     }
-    public List<ArchivoNotificacion> listarArchivosNotificacion(ArchivoNotificacion archivoNotificacion){
+    public List<ArchivoNotificacion> listarArchivosNotificacion(ArchivoNotificacion archivoNotificacion) throws HandledException{
+        try {
         iNotificacionMapper.spListarArchivosNotificacion(archivoNotificacion);
+        } catch (Exception ex) {
+            logger.error(ex.getMessage());
+            throw new HandledException("Failed to listarArchivosNotificacion", ex);
+        }
         return archivoNotificacion.getListArchivoNotificacion();
     }
 
