@@ -10,8 +10,7 @@ public interface Constante {
     public int PARAMETROS_DOCUMENTO=8;
     public int TABLA_SUSTENTO=4;
     public int TABLA_ESTADO= 6;
-    public int TABLA_ORGANO=10;
-    public String ESTADO_REGISTRADO="01";
+    public int TABLA_ORGANO=10;    public String ESTADO_REGISTRADO="01";
     public String ESTADO_ENVIADO="02";
     public String ELIMINAR_ARCHIVO="TX_DEL";
     public String INSERTAR_ARCHIVO="TX_INS";
@@ -53,7 +52,7 @@ public interface Constante {
     public String NOMBRE_ROL_NATURAL= "ROLE_USNAT_CERO_PAPEL";
     public String NOMBRE_ROL_JURIDICA= "ROLE_USJUR_CERO_PAPEL";
     public String NOMBRE_DECLARACION_JURADA= "[1234567890] - DECLARAC_JURADA_TERMINOS_CONDICIONES.pdf";
-
+    public int ID_SISTEMA = 105;
 }
 
 

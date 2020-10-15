@@ -56,6 +56,8 @@ public class ControllerUsuario {
         //System.out.println(valido.getToken().replaceAll("[^0-9]", ""));
         AtomicReference<String> vista = new AtomicReference<>("");
         Long idUsuario = Long.parseLong(valido.getToken().replaceAll("[^0-9]", ""));
+        System.out.println(valido.getToken()+"::"+valido.getFlgAccionUsuario());
+        logger.info("valido.getFlgAccionUsuario().",valido.getFlgAccionUsuario());
         if(valido.getFlgAccionUsuario().equals("0")){
             valido.setIdUsuario(idUsuario);
             usuarioService.validate(valido);
@@ -71,6 +73,7 @@ public class ControllerUsuario {
         }else{
            usuarioService.getUsuarioValido(valido).map( u ->
                     {
+
                         model.addAttribute("usuario", u);
                         vista.set("cambiarClave");
                         return u;

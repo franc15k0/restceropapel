@@ -11,6 +11,7 @@ import java.util.List;
 public class Rol {
     private Integer idRol;
     private Long  idUsuario;
+    private Integer idSistema;
     private String nombre;
     private String descripcion;
     private String estadoRegistro;

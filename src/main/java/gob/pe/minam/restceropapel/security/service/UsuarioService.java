@@ -85,7 +85,11 @@ public class UsuarioService implements  IUsuarioService, UserDetailsService{
             logger.error("Error en el login: no existe el usuario '"+usuarioName+"' en el sistema!");
             throw new UsernameNotFoundException("Error en el login: no existe el usuario '"+usuarioName+"' en el sistema!");
         }
-        Rol rol = Rol.builder().idUsuario(usuario.getIdUsuario()).build();
+        Rol rol = Rol
+                .builder()
+                .idUsuario(usuario.getIdUsuario())
+                .idSistema(Integer.parseInt(environment.getProperty("aplication.idsistema")))
+                .build();
         usuarioMapper.spFindByRol(rol);
         List<Rol> roles =  rol.getListRol();
         List<GrantedAuthority> authorities = roles
@@ -361,5 +365,15 @@ public class UsuarioService implements  IUsuarioService, UserDetailsService{
             enviarSMS(numeroTelefonoCelular,valido.getCodigo());
 
     }
+    public List<Menu> listMenuSistema(Long idSistema){
+        Menu menu = Menu
+                .builder()
+                .idUsuario(idSistema)
+                .idSistema(Integer.parseInt(environment.getProperty("aplication.idsistema")))
+                .build();
+        usuarioMapper.spBuscarMenuUsuarioRol(menu);
+        return menu.getListMenu();
+    }
+
 }
 

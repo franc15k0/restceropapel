@@ -2,12 +2,10 @@ package gob.pe.minam.restceropapel.security.service;
 
 
 import gob.pe.minam.restceropapel.api.model.Ubigeo;
-import gob.pe.minam.restceropapel.security.entity.Reniec;
-import gob.pe.minam.restceropapel.security.entity.Sesion;
-import gob.pe.minam.restceropapel.security.entity.Usuario;
-import gob.pe.minam.restceropapel.security.entity.Valido;
+import gob.pe.minam.restceropapel.security.entity.*;
 import gob.pe.minam.restceropapel.util.HandledException;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -26,4 +24,5 @@ public interface IUsuarioService {
     public Usuario enviarInformacionRecuperarContrasena(String numeroDocumento);
     public Reniec buscarReniec(String DNI);
     public void regenerarCodigoValidacion(String token);
+    public List<Menu> listMenuSistema(Long idSistema);
 }

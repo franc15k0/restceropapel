@@ -154,7 +154,7 @@
                 <form action="#" th:action="@{/usuario/validation-codigo}" th:object="${valido}" method="post" onsubmit="return required()">
                     <div th:if="${valido}">
                         <input type="hidden" id = "token" name="token" th:value="${valido.token}"/>
-                        <input type="hidden" name="flgAccionUsuario" th:value="${valido.flgAccionUsuario}"/>
+                        <input type="hidden" id = "flgAccionUsuario" name="flgAccionUsuario" th:value="${valido.flgAccionUsuario}"/>
                     </div>
                     <div th:unless="${valido}">
                         <input type="hidden" id = "token" name="token" th:value="${token}"/>

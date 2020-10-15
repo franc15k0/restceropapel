@@ -111,7 +111,28 @@
     </parameterMap>
     <parameterMap id="rolParametros" type="Rol">
         <parameter property="idUsuario" jdbcType="INTEGER" mode="IN"  />
+        <parameter property="idSistema" jdbcType="INTEGER" mode="IN"  />
         <parameter property="listRol" jdbcType="CURSOR" mode="OUT" resultMap="rolResult"  />
+    </parameterMap>
+
+    <resultMap id="menuCursorResult" type="Menu" >
+        <result column="ID_MENU" property="idMenu"/>
+        <result column="NOMBRE" property="nombre"/>
+        <result column="DESCRIPCION" property="descripcion"/>
+        <result column="ACCION" property="accion"/>
+        <result column="ESTADO_REGISTRO" property="estadoRegistro"/>
+        <result column="ID_MENU_PADRE" property="idMenuPadre"/>
+        <result column="ID_SISTEMA" property="idSistema"/>
+        <result column="NVISIBLE_MENU" property="nvisibleMenu"/>
+        <result column="NNIVEL_MENU" property="nnivelMenu"/>
+        <result column="PARAMETRO" property="parametro"/>
+        <result column="ORDEN" property="orden"/>
+        <result column="TIPO_MENU" property="tipoMenu"/>
+    </resultMap>
+    <parameterMap id="menuParametro" type="Menu">
+        <parameter property="idUsuario" jdbcType="INTEGER" mode="IN"  />
+        <parameter property="idSistema" jdbcType="INTEGER" mode="IN"  />
+        <parameter property="listMenu" jdbcType="CURSOR" mode="OUT" resultMap="menuCursorResult"  />
     </parameterMap>
 
 
@@ -131,7 +152,7 @@
 
 
     <select id="spFindByRol" parameterMap="rolParametros" statementType="CALLABLE">
-        {CALL BD_MINAM.USP_SEL_SG_ROL_IDUSU(?, ?)}
+        {CALL BD_MINAM.USP_SEL_SG_ROL_IDUSU(?, ?, ?)}
     </select>
 
 
@@ -224,5 +245,8 @@
     </select>
     <select id="spSelUsuarioIdSegfys" parameterMap="usuarioLdapParam" statementType="CALLABLE">
         {CALL BD_MINAM.USP_SEL_SG_USUARIO_ID_SEGFYS(?, ?)}
+    </select>
+    <select id="spBuscarMenuUsuarioRol" parameterMap="menuParametro" statementType="CALLABLE">
+        {CALL BD_MINAM.USP_SEL_SG_MENU_USUARIO_ROL(?, ?, ?)}
     </select>
 </mapper>

@@ -2,11 +2,9 @@ package gob.pe.minam.restceropapel.security.controller;
 
 import gob.pe.minam.restceropapel.api.controller.RestControllerExpediente;
 import gob.pe.minam.restceropapel.api.model.Ubigeo;
-import gob.pe.minam.restceropapel.security.entity.Reniec;
-import gob.pe.minam.restceropapel.security.entity.Sunat;
-import gob.pe.minam.restceropapel.security.entity.SunatWs;
-import gob.pe.minam.restceropapel.security.entity.Usuario;
+import gob.pe.minam.restceropapel.security.entity.*;
 import gob.pe.minam.restceropapel.security.service.IUsuarioService;
+import gob.pe.minam.restceropapel.util.Constante;
 import gob.pe.minam.restceropapel.util.HandledException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,6 +75,11 @@ public class RestControllerUsuario {
         }
         usuarioService.listarUbigeos(ubigeo);
         return ubigeo.getListUbigeos();
+    }
+    @GetMapping("/menu/{idUsuario}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Menu> menu(@PathVariable String idUsuario) {
+        return usuarioService.listMenuSistema(Long.parseLong(idUsuario));
     }
     @GetMapping("/recuperar/{numDocumento}")
     @ResponseStatus(HttpStatus.OK)

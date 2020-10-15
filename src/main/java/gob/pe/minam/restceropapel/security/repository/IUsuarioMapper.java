@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface IUsuarioMapper {
-    public List<Rol> spFindByRol(Rol rol);
+    public void spFindByRol(Rol rol);
     public void spInsertUsuario(Usuario usuario);
     public void spInsertUsuarioValid(Valido valid);
     public void spModificarUserValid(Valido valid);
@@ -22,5 +22,6 @@ public interface IUsuarioMapper {
     public void spModificarUsuarioInactivo(Usuario usuario);
     public void spSelPersonalUsuario(Usuario usuario);
     public void spSelUsuarioIdSegfys(Usuario usuario);
+    public void spBuscarMenuUsuarioRol(Menu menu);
 }
 

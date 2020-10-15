@@ -11,6 +11,8 @@ import java.util.Optional;
 @AllArgsConstructor
 public class Valido {
     private Long idUsuarioValid;
+    private String contracena;
+    private String confirmContracena;
     private Long idUsuario;
     private Long idCiudadano;
     private String token;
