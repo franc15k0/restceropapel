@@ -262,7 +262,7 @@ public class UsuarioService implements  IUsuarioService, UserDetailsService{
                     .sversionmodulo("0.1")
                     .idSistema(environment.getProperty("aplication.idsistema"))
                     .susuariored("XXX")
-                    .linkAplicativo("www.minam.gob.pe/ceropapel")
+                    .linkAplicativo(environment.getProperty("link.aplicativo"))
                     .build();
             sesionMapper.spInsertSesion(sesion);
             sesion.setIdSesion(sesion.getIdSesionCursor().stream().findFirst().get().getIdSesion());

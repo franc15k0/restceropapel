@@ -31,7 +31,7 @@ public class LdapConfig {
             DOMINIO_MAIL = Property.getInstance().getValorCp("ldap.domain");
             env.put(Context.INITIAL_CONTEXT_FACTORY, LDAP_CONTEXT_FACTORY);
             env.put(Context.SECURITY_AUTHENTICATION, LDAP_SECURITY_AUTHENTICATION);
-            env.put(Context.PROVIDER_URL,LDAP_PROVIDER_URL);
+          //  env.put(Context.PROVIDER_URL,LDAP_PROVIDER_URL);
         }catch(Exception e){
             e.printStackTrace();
         }

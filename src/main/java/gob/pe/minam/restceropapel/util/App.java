@@ -33,7 +33,7 @@ public class App {
             }
             System.out.println(tramaUbigeo[0]);
             System.out.println(trama3);*/
-           String archivo = "undefined";
+          /* String archivo = "undefined";
             //System.out.println(archivo.split("-")[1].trim());
             byte[] encodedBytes = Base64.encodeBase64(archivo.getBytes());
             String jaja = new String(encodedBytes);
@@ -41,7 +41,8 @@ public class App {
            // System.out.println("encodedBytes " + new String(encodedBytes));
             //dW5kZWZpbmVk
             byte[] decodedBytes = Base64.decodeBase64("dW5kZWZpbmVk");
-            System.out.println("decodedBytes " + new String(decodedBytes));
+            System.out.println("decodedBytes " + new String(decodedBytes));*/
+            System.out.println(System.getProperties().getProperty("os.name"));
         } catch (Exception ex) {
 
         ex.printStackTrace();
