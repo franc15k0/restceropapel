@@ -4,7 +4,6 @@ import gob.pe.minam.restceropapel.api.model.*;
 import gob.pe.minam.restceropapel.api.repository.*;
 import gob.pe.minam.restceropapel.security.entity.Sesion;
 import gob.pe.minam.restceropapel.security.service.IUsuarioService;
-import gob.pe.minam.restceropapel.security.service.UsuarioService;
 import gob.pe.minam.restceropapel.util.Constante;
 import gob.pe.minam.restceropapel.util.HandledException;
 import org.slf4j.Logger;
@@ -44,7 +43,8 @@ public class ExpedienteService implements  IExpedienteService {
     public String cargarExpedienteCeroPapel(Expediente expediente) throws HandledException {
         String resultado;
         try {
-            expediente.setSesion(usuarioService.obtenerSesion(expediente.getUsuario().getIdUsuario()));
+            expediente.getSesion().setIdUsuario(expediente.getUsuario().getIdUsuario());
+            expediente.setSesion(usuarioService.obtenerSesion(expediente.getSesion()));
             expediente.getRegistro().setCodTestaTrami(Constante.TABLA_ESTADO);
             expediente.getRegistro().setCodEestaTrami(Constante.ESTADO_REGISTRADO);
             expediente.getRegistro().setCodTorgano(Constante.TABLA_ORGANO);
@@ -94,7 +94,8 @@ public class ExpedienteService implements  IExpedienteService {
     @Transactional(rollbackFor={Exception.class})
     public Registro actualizarExpediente(Expediente expediente) throws HandledException {
         try {
-        expediente.setSesion(usuarioService.obtenerSesion(expediente.getUsuario().getIdUsuario()));
+        expediente.getSesion().setIdUsuario(expediente.getUsuario().getIdUsuario());
+        expediente.setSesion(usuarioService.obtenerSesion(expediente.getSesion()));
         expediente.getRegistro().setIdSesionMod(expediente.getSesion().getIdSesion());
         iRegistroMapper.spActualizarRegistroEdicion(expediente.getRegistro());
         expediente.getDocumento().setIdSesionMod(expediente.getSesion().getIdSesion());
@@ -152,7 +153,8 @@ public class ExpedienteService implements  IExpedienteService {
         listNotificacion = notificacion.getListNotificacion();
         Sesion sesion= new Sesion();
         if(listNotificacion.size()>0){
-            sesion = usuarioService.obtenerSesion(notificacion.getIdUsuario());
+            notificacion.getSesion().setIdUsuario(notificacion.getIdUsuario());
+            sesion = usuarioService.obtenerSesion(notificacion.getSesion());
         }
         Sesion finalSesion = sesion;
         listNotificacion.forEach(n ->{

@@ -9,6 +9,8 @@ import gob.pe.minam.restceropapel.util.HandledException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.InetAddress;
 import java.util.*;
 
 @CrossOrigin(origins = "*")
@@ -32,6 +35,7 @@ public class RestControllerUsuario {
     @GetMapping("/validacion/reniec/{dni}")
     @ResponseStatus(HttpStatus.OK)
     public Reniec buscarReniec(@PathVariable String dni){
+        logger.info("buscarREniec", InetAddress.getLoopbackAddress().getHostAddress());
         return usuarioService.buscarReniec(dni);
     }
     @GetMapping("/validacion/sunat/{ruc}")
@@ -81,20 +85,21 @@ public class RestControllerUsuario {
     public List<Menu> menu(@PathVariable String idUsuario) {
         return usuarioService.listMenuSistema(Long.parseLong(idUsuario));
     }
-    @GetMapping("/recuperar/{numDocumento}")
+    @GetMapping("/recuperar/{numDocumento}/{linkApp}")
     @ResponseStatus(HttpStatus.OK)
-    public String recuperar(@PathVariable String numDocumento) {
-        Usuario user = usuarioService.enviarInformacionRecuperarContrasena(numDocumento);
+    public String recuperar(@PathVariable String numDocumento, @PathVariable String linkApp) {
+        Usuario user = usuarioService.enviarInformacionRecuperarContrasena(numDocumento, linkApp);
                 Optional.ofNullable(user).orElseThrow(IllegalArgumentException::new);
 
         return "ok";
     }
     @GetMapping("/regenerarsms/{token}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity regenerarSms(@PathVariable String token) {
-        logger.info("token____"+token);
+    public ResponseEntity regenerarSms(@PathVariable String token, HttpServletRequest request) {
+        logger.info("regenerarSms",request.getServerPort()+request.getContextPath());
+        String lnkApp= request.getServerPort()+request.getContextPath();
         try{
-            usuarioService.regenerarCodigoValidacion(token);
+            usuarioService.regenerarCodigoValidacion(token, lnkApp);
          }catch (Exception e){
           e.printStackTrace();
           return new ResponseEntity(HttpStatus.CONFLICT);

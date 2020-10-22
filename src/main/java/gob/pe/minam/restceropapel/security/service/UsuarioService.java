@@ -56,7 +56,8 @@ public class UsuarioService implements  IUsuarioService, UserDetailsService{
     ICodigoService iCodigoService;
     @Value("${servicios.rest.minam}")
     private String restMinam;
-
+    @Value("${build.version}")
+    private String buildVersion;
     @Autowired
     Environment environment;
 
@@ -111,7 +112,7 @@ public class UsuarioService implements  IUsuarioService, UserDetailsService{
         try {
             PasswordEncoder encoder = new BCryptPasswordEncoder();
             List<DetalleCompendio> roles = iCodigoService.getMapDetalleCompendiosCorto(Constante.CODIGO_ROLES);
-            Sesion session = obtenerParametroRegistroUsuario();
+            Sesion session = obtenerParametroRegistroUsuario(usuario.getSesion());
             usuario.setContracena(encoder.encode(usuario.getContracena()));
             usuario.setEstadoRegistro("I");
             usuario.setTipo("1");
@@ -195,7 +196,12 @@ public class UsuarioService implements  IUsuarioService, UserDetailsService{
     @Transactional(rollbackFor={Exception.class})
     public void validate(Valido valido) throws HandledException {
         try{
-            Sesion session = obtenerSesion(valido.getIdUsuario());
+
+            Sesion session = obtenerSesion(Sesion
+                    .builder()
+                    .idUsuario(valido.getIdUsuario())
+                    .linkAplicativo(valido.getLinkAplicativo())
+                    .build());
             valido.setIdSesionMod(session.getIdSesion());
             usuarioMapper.spModificarUserValid(valido);
         }catch (Exception ex){
@@ -240,30 +246,26 @@ public class UsuarioService implements  IUsuarioService, UserDetailsService{
                 .txtUbigeoDistrito(trama3).build())).orElseGet(()-> Constante.INTERNACIONAL);
     }
 
-    public Sesion obtenerParametroRegistroUsuario(){
+    public Sesion obtenerParametroRegistroUsuario(Sesion sesion){
         Parametro parametro = Parametro.builder().snombre(Constante.CERO_PAPEL).build();
         sesionMapper.spBuscarParametroSesion(parametro);
         parametro.setSvalor(parametro.getValorCursor().stream().findFirst().get().getSvalor());
         Usuario usuario =  Usuario.builder().usuario(parametro.getSvalor()).build();
         usuarioMapper.spBuscarUsuarioDefault(usuario);
-        return obtenerSesion(usuario.getListUsuarios().stream().findFirst().get().getIdUsuario());
+        sesion.setIdUsuario(usuario.getListUsuarios().stream().findFirst().get().getIdUsuario());
+        return obtenerSesion(sesion);
     }
-    public Sesion obtenerSesion(Long ideUsuario){
+    public Sesion obtenerSesion(Sesion sesion){
 
         try {
-            Sesion sesion = Sesion
-                    .builder()
-                    .smacaddress(Utilitario.obtenerMACRemota())
-                    .sipaddress(Utilitario.obtenerIpAddress(request))
-                    .sappserver(Utilitario.obtenerIPRemota())
-                    .susuariored(System.getProperties().getProperty("user.name"))
-                    .ssistoperativo(System.getProperties().getProperty("os.name"))
-                    .idUsuario(ideUsuario)
-                    .sversionmodulo("0.1")
-                    .idSistema(environment.getProperty("aplication.idsistema"))
-                    .susuariored("XXX")
-                    .linkAplicativo(environment.getProperty("link.aplicativo"))
-                    .build();
+            sesion.setSmacaddress(Utilitario.obtenerMACRemota());
+            sesion.setSipaddress(Utilitario.obtenerIpAddress(request));
+            sesion.setSappserver(Utilitario.obtenerIPRemota());
+            sesion.setSusuariored(Optional.ofNullable(sesion.getSusuariored()).orElseGet(() ->System.getProperties().getProperty("user.name")));
+            sesion.setSsistoperativo(System.getProperties().getProperty("os.name"));
+            sesion.setSversionmodulo(buildVersion);
+            sesion.setIdSistema(environment.getProperty("aplication.idsistema"));
+            sesion.setLinkAplicativo(Optional.ofNullable(sesion.getLinkAplicativo()).orElseGet(() ->environment.getProperty("aplication.hostname")));
             sesionMapper.spInsertSesion(sesion);
             sesion.setIdSesion(sesion.getIdSesionCursor().stream().findFirst().get().getIdSesion());
             return sesion;
@@ -311,15 +313,20 @@ public class UsuarioService implements  IUsuarioService, UserDetailsService{
     @Transactional(rollbackFor={Exception.class})
     public void spResetearContrasena(Usuario usuario) throws HandledException{
         PasswordEncoder encoder = new BCryptPasswordEncoder();
-        Sesion session = obtenerSesion(usuario.getIdUsuario());
+        usuario.getSesion().setIdUsuario(usuario.getIdUsuario());
+        Sesion session = obtenerSesion(usuario.getSesion());
         usuario.setIdSesionMod(session.getIdSesion());
         usuario.setContracena(encoder.encode(usuario.getContracena()));
         usuarioMapper.spResetearContrasena(usuario);
     }
-    public Usuario enviarInformacionRecuperarContrasena(String numeroDocumento){
+    public Usuario enviarInformacionRecuperarContrasena(String numeroDocumento, String linkApp ){
 
         Usuario usuario = getUsuarioExterno(numeroDocumento).map(u->{
-            Sesion session = obtenerSesion(u.getIdUsuario());
+            Sesion session = obtenerSesion(Sesion
+                    .builder()
+                    .idUsuario(u.getIdUsuario())
+                    .linkAplicativo(linkApp)
+                    .build());
             u.setIdSesionMod(session.getIdSesion());
             usuarioMapper.spModificarUsuarioInactivo(u);
             Valido valido = Valido
@@ -347,11 +354,15 @@ public class UsuarioService implements  IUsuarioService, UserDetailsService{
         return reniecWs.getData();
     }
     @Transactional(rollbackFor={Exception.class})
-    public void regenerarCodigoValidacion(String token){
+    public void regenerarCodigoValidacion(String token, String linkApp){
 
             Long idUsuario = Long.parseLong(token.replaceAll("[^0-9]", ""));
 
-            Sesion session = obtenerSesion(idUsuario);
+            Sesion session = obtenerSesion(Sesion
+                    .builder()
+                    .idUsuario(idUsuario)
+                    .linkAplicativo(linkApp)
+                    .build());
             Valido valido = Valido
                     .builder()
                     .token(token)

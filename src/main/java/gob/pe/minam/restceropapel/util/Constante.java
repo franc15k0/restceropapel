@@ -52,7 +52,8 @@ public interface Constante {
     public String NOMBRE_ROL_NATURAL= "ROLE_USNAT_CERO_PAPEL";
     public String NOMBRE_ROL_JURIDICA= "ROLE_USJUR_CERO_PAPEL";
     public String NOMBRE_DECLARACION_JURADA= "[1234567890] - DECLARAC_JURADA_TERMINOS_CONDICIONES.pdf";
-    public int ID_SISTEMA = 105;
+    public String TIPO_USUARIO_MINAM = "2";
+
 }
 
 

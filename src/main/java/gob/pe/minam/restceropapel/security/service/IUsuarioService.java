@@ -15,14 +15,14 @@ public interface IUsuarioService {
     public Usuario insertUsuario(Usuario usuario) throws HandledException;
     public void validate(Valido valido) throws HandledException;
     public void listarUbigeos(Ubigeo ubigeo);
-    public Sesion obtenerSesion(Long ideUsuario);
+    public Sesion obtenerSesion(Sesion sesion);
     public Optional<Usuario> getUsuarioInterno(String usuarioName);
     public Optional<Usuario> getUsuarioExterno(String usuarioName);
     public Integer obtenerUbigeo(String txtUbigeo);
     public Optional<Valido> getUsuarioValido(Valido valid);
     public void spResetearContrasena(Usuario usuario) throws HandledException;
-    public Usuario enviarInformacionRecuperarContrasena(String numeroDocumento);
+    public Usuario enviarInformacionRecuperarContrasena(String numeroDocumento, String linkApp);
     public Reniec buscarReniec(String DNI);
-    public void regenerarCodigoValidacion(String token);
+    public void regenerarCodigoValidacion(String token, String linkApp);
     public List<Menu> listMenuSistema(Long idSistema);
 }

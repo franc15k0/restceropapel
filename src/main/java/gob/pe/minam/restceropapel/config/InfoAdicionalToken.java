@@ -2,6 +2,7 @@ package gob.pe.minam.restceropapel.config;
 
 import gob.pe.minam.restceropapel.api.model.Ciudadano;
 import gob.pe.minam.restceropapel.api.service.ICiudadanoService;
+import gob.pe.minam.restceropapel.security.entity.Sesion;
 import gob.pe.minam.restceropapel.security.entity.Usuario;
 import gob.pe.minam.restceropapel.security.service.IUsuarioService;
 import gob.pe.minam.restceropapel.util.Constante;
@@ -28,7 +29,12 @@ public class InfoAdicionalToken implements TokenEnhancer {
 
         Usuario usuario = usuarioService.getUsuarioExterno(authentication.getName()).orElseGet(()->usuarioService.getUsuarioInterno(authentication.getName()).orElseGet(()->null));
         Ciudadano ciudadano = ciudadanoService.getCiudadanoNroDocumento(Optional.ofNullable(usuario.getIdTipoDocumento()).orElseGet(()->Constante.ES_PERSONANATURAL),usuario.getUsuario()).orElseGet(()-> Ciudadano.builder().idCiudadano(0L).build());
-        usuarioService.obtenerSesion(usuario.getIdUsuario());
+
+        usuarioService.obtenerSesion(Sesion
+                        .builder()
+                        .idUsuario(usuario.getIdUsuario())
+                        .susuariored((usuario.getTipo().equals(Constante.TIPO_USUARIO_MINAM))? "minam/"+usuario.getUsuario():null)
+                        .build());
         Map<String, Object> info = new HashMap<>();
         info.put("idUsuario", usuario.getIdUsuario());
         info.put("nombres", usuario.getNombres());

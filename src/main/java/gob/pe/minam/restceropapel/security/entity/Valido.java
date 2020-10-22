@@ -22,6 +22,7 @@ public class Valido {
     private String flgAccionUsuario;
     private Long idSesionReg;
     private Long idSesionMod;
+    private String linkAplicativo;
     private String resultado;
 }
 

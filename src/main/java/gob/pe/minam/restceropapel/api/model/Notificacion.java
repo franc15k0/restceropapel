@@ -1,5 +1,6 @@
 package gob.pe.minam.restceropapel.api.model;
 
+import gob.pe.minam.restceropapel.security.entity.Sesion;
 import lombok.*;
 
 import java.util.List;
@@ -26,5 +27,6 @@ public class Notificacion {
     private String fecSalidaHasta;
     private String nombreDocumento;
     private String numeroCeroPapel;
+    private Sesion sesion;
     private List<Notificacion> listNotificacion;
 }

@@ -52,8 +52,9 @@ public class ControllerUsuario {
     }
 
     @PostMapping("/usuario/validation-codigo")
-    public String validation(@Valid Valido valido, Model model) throws HandledException {
+    public String validation(@Valid Valido valido, Model model, HttpServletRequest request) throws HandledException {
         //System.out.println(valido.getToken().replaceAll("[^0-9]", ""));
+        valido.setLinkAplicativo(request.getServerPort()+request.getContextPath());
         AtomicReference<String> vista = new AtomicReference<>("");
         Long idUsuario = Long.parseLong(valido.getToken().replaceAll("[^0-9]", ""));
         System.out.println(valido.getToken()+"::"+valido.getFlgAccionUsuario());
@@ -92,8 +93,9 @@ public class ControllerUsuario {
         return vista.get();
     }
     @PostMapping("/usuario/reset-contrasena")
-    public String resetPassword(Model model, @ModelAttribute("usuario") @Valid Usuario usuario) {
-
+    public String resetPassword(Model model, @ModelAttribute("usuario") @Valid Usuario usuario, HttpServletRequest request) {
+        logger.info("resetPassword",request.getServerPort()+request.getContextPath());
+        usuario.getSesion().setLinkAplicativo(request.getServerPort()+request.getContextPath());
         try{
         usuarioService.spResetearContrasena(usuario);
 

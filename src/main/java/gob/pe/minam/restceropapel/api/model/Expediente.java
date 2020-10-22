@@ -17,7 +17,6 @@ public class Expediente {
     private Usuario usuario;
     private Sesion sesion;
     private PersonalEcodoc personalEcodoc;
- //   private FirmaDigital firmaDigital;
     private List<Archivo> archivos;
 
 }

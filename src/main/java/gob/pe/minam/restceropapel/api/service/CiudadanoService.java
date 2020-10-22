@@ -54,7 +54,8 @@ public class CiudadanoService implements ICiudadanoService {
     @Transactional(rollbackFor={Exception.class})
     public Ciudadano grabarRepresentanteLegal(Ciudadano ciudadano)throws HandledException {
         try {
-        Sesion sesion =  usuarioService.obtenerSesion(ciudadano.getIdUsuario());
+        ciudadano.getSesion().setIdUsuario(ciudadano.getIdUsuario());
+        Sesion sesion =  usuarioService.obtenerSesion(ciudadano.getSesion());
         PersonaNatural personaNatural = PersonaNatural
                 .builder()
                 .numDni(ciudadano.getNumDni())
@@ -91,7 +92,8 @@ public class CiudadanoService implements ICiudadanoService {
     }
     @Transactional(rollbackFor={Exception.class})
     public Ciudadano asignarRepresentanteLegal(Ciudadano ciudadano)throws HandledException{
-        Sesion sesion =  usuarioService.obtenerSesion(ciudadano.getIdUsuario());
+        ciudadano.getSesion().setIdUsuario(ciudadano.getIdUsuario());
+        Sesion sesion =  usuarioService.obtenerSesion(ciudadano.getSesion());
         Ciudadano ciudadanoJuridico = getCiudadanoId(ciudadano.getIdCiudadanoEmpresa()).get();
         ciudadanoJuridico.setIdSesionMod(sesion.getIdSesion());
         iCiudadanoMapper.spQuitarRepresentates(ciudadanoJuridico);

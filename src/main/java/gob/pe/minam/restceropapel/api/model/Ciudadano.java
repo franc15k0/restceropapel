@@ -1,5 +1,6 @@
 package gob.pe.minam.restceropapel.api.model;
 
+import gob.pe.minam.restceropapel.security.entity.Sesion;
 import lombok.*;
 
 import java.util.List;
@@ -37,5 +38,6 @@ public class Ciudadano {
     private String numeroDocumento;
     private String idTipoDocumento;
     private String resultado;
+    private Sesion sesion;
     List<Ciudadano> listCiudadano;
 }
