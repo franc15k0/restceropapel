@@ -2,6 +2,8 @@ package gob.pe.minam.restceropapel.api.service;
 
 import gob.pe.minam.restceropapel.api.model.*;
 import gob.pe.minam.restceropapel.api.repository.*;
+import gob.pe.minam.restceropapel.security.entity.Sesion;
+import gob.pe.minam.restceropapel.security.service.IUsuarioService;
 import gob.pe.minam.restceropapel.util.Constante;
 import gob.pe.minam.restceropapel.util.HandledException;
 import gob.pe.minam.restceropapel.util.PasswordGenerator;
@@ -35,6 +37,8 @@ public class EcodocService implements IEcodocService{
     ICodigoService iCodigoService;
     @Value("${file.upload-dir-ecodoc}")
     String uploadDirEcodoc;
+    @Autowired
+    private IUsuarioService usuarioService;
     public String getParametro(List<DetalleCompendio> parametros, String filter){
         return parametros.stream().filter(p -> filter.equals(p.getCodElementoTabla())).findAny().get().getTxtReferenciaEcodoc();
     }
@@ -138,7 +142,11 @@ public class EcodocService implements IEcodocService{
                 .idPersona(1228)
                 .responsable("1")
                 .build());
-
+        Sesion sesion= usuarioService.obtenerSesion(Sesion
+                .builder()
+                .idUsuario(expedienteCP.getUsuario().getIdUsuario())
+                .build());
+        expedienteCP.getRegistro().setIdSesionMod(sesion.getIdSesion());
         expedienteCP.getRegistro().setIdExpediente(expediente.getIdExpediente());
         expedienteCP.getRegistro().setCodEestaTrami(Constante.ESTADO_ENVIADO);
         registroMapper.spActualizarRegistroExp(expedienteCP.getRegistro());
