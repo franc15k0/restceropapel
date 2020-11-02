@@ -168,6 +168,7 @@ public class ExpedienteService implements  IExpedienteService {
         });
         } catch (Exception ex) {
             logger.error(ex.getMessage());
+            ex.printStackTrace();
             throw new HandledException("Failed to listaNotificacion", ex);
         }
         return listNotificacion;

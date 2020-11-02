@@ -281,6 +281,7 @@ public class RestControllerExpediente {
             response.put("mensaje","error!");
             response.put("error","Se presento un Error");
             logger.error(e.getMessage());
+            e.printStackTrace();
             return new ResponseEntity<Map<String, Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
         }
 

@@ -106,8 +106,8 @@ public class UsuarioService implements  IUsuarioService, UserDetailsService{
     public Usuario insertUsuario(Usuario usuario) throws HandledException {
         if(getUsuarioExterno(usuario.getUsuario()).isPresent()){
             usuario.setResultado("El Usuario ya existe");
-            return usuario;
-
+            throw new HandledException("Exception message", "El Usuario ya existe");
+            //return usuario;
         }
         try {
             PasswordEncoder encoder = new BCryptPasswordEncoder();

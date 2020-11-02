@@ -17,7 +17,7 @@
     <resultMap id="archivoNotificacionCursorResult" type="ArchivoNotificacion" >
         <result column="NUMERO" property="numero"/>
         <result column="NOMBRE" property="nombre"/>
-        <result column="ID_ARCHIVO" property="idArchivo"/>
+        <result column="ID_ARCHIVO" property="idArchivo"/>  
     </resultMap>
 
     <parameterMap id="notificacionParametros" type="Notificacion">

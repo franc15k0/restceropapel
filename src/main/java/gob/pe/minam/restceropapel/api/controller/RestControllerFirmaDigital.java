@@ -8,6 +8,7 @@ import gob.pe.minam.restceropapel.api.service.IUploadFileService;
 import gob.pe.minam.restceropapel.security.service.IUsuarioService;
 import gob.pe.minam.restceropapel.util.ConfigurationFirma;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,6 +32,9 @@ public class RestControllerFirmaDigital {
     IExpedienteService expedienteService;
     @Autowired
     ICodigoService codigoService;
+    @Value("${Protocol}")
+    private String protocol;
+
     private final ConfigurationFirma config = ConfigurationFirma.getInstance();
 
     @GetMapping("/getArguments/{nombreArchivo}")
@@ -50,7 +54,9 @@ public class RestControllerFirmaDigital {
         String serverPath = fullPathServlet.substring(0, resInt + 1);
         if (!serverPath.contains("localhost")) {
             // EN PRODUCCIÓN: config.getProtocol() define el protocolo.
-            serverPath = config.getProtocol() + "://" + serverPath.replace("http://", "").replace("https://", "");
+
+           // serverPath = config.getProtocol() + "://" + serverPath.replace("http://", "").replace("https://", "");
+            serverPath = protocol+ "://" + serverPath.replace("http://", "").replace("https://", "");
         }
         String arguments = "";
         try {
