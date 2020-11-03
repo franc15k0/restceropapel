@@ -27,6 +27,7 @@
         <result column="CAMBIACLAVE" property="cambioClave"/>
         <result column="ID_TIPO_DOCUMENTO" property="idTipoDocumento"/>
         <result column="NUMERO_DOCUMENTO" property="numeroDocumento"/>
+        <result column="CLAVE_TEMPO" property="claveTempo"/>
     </resultMap>
     <parameterMap id="usuarioActivoParametros" type="Usuario">
         <parameter property="usuario" jdbcType="VARCHAR" mode="IN"  />

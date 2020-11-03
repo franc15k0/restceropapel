@@ -57,9 +57,11 @@ public class Usuario {
     private String descDepeTde;
     private String vcNombre;
     private String fechaPopupCumple;
+    private String claveTempo;
     private List<Usuario> listUsuarios;
     private Valido valido;
     private Sesion sesion;
+
 
 
 }

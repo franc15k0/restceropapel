@@ -68,47 +68,49 @@
     <img width="270px" class="d-block mx-auto" src="/restceropapel/assets/img/logo_minam.jpg">
     <h2 class="my-3 text-center colorPrincipal">Sistema de Trámite Cero Papel</h2>
     <h3 class="my-3 mt-3 text-center colorPrincipal"> Recuperar Contraseña</h3>
+        <div th:if="${resultado}">
+            <div th:if="${resultado == '0'}">
+                <script th:inline="javascript">
+                    /*<![CDATA[*/
+                    swal({
+                        type: 'warning',
+                        title: 'Validación',
+                        text: 'Se presento un error, intentar mas tarde',
+                    });
+                    /*]]>*/
+                </script>
+            </div>
+            <div th:if="${resultado == '1'}">
+                <script th:inline="javascript">
+                    /*<![CDATA[*/
+                    swal({
+                        type: 'success',
+                        title: 'Se cambio la Contraseña Correctamente',
+                        text: 'Desea ir al Login?',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Si, Enviame!'
+                    }).then(function(result) {
+                        if (result.value) {
+                            location.assign(window.location.protocol+ "//"+window.location.host+"/ceropapelapp")
+                        }
+                    });
+                    /*]]>*/
+                </script>
+            </div>
+
+        </div>
+
 
        <form action="#" th:action="@{/usuario/reset-contrasena}" th:object="${usuario}" method="post" onsubmit="return required()">
-            <input type="hidden" name="idUsuario" th:value="${usuario.idUsuario}"/>
-            <input type="hidden" name="idUsuarioValid" th:value="${usuario.idUsuarioValid}"/>
-           <div th:if="${resultado}">
-               <div th:if="${resultado == '0'}">
-                   <script th:inline="javascript">
-                       /*<![CDATA[*/
-                       swal({
-                           type: 'warning',
-                           title: 'Validación',
-                           text: 'Se presento un error, intentar mas tarde',
-                       });
-                       /*]]>*/
-                   </script>
-               </div>
-               <div th:if="${resultado == '1'}">
-                   <script th:inline="javascript">
-                       /*<![CDATA[*/
-                       swal({
-                           type: 'success',
-                           title: 'Se cambio la Contraseña Correctamente',
-                           text: 'Desea ir al Login?',
-                           showCancelButton: true,
-                           confirmButtonColor: '#3085d6',
-                           cancelButtonColor: '#d33',
-                           confirmButtonText: 'Si, Enviame!'
-                       }).then(function(result) {
-                           if (result.value) {
-                               location.assign(window.location.protocol+ "//"+window.location.host+"/ceropapelapp")
-                           }
-                       });
-                       /*]]>*/
-                   </script>
-               </div>
+            <input type="hidden" name="idUsuario" th:value="${usuario.idUsuario}" />
+            <input type="hidden" name="idUsuarioValid" th:value="${usuario.idUsuarioValid}" />
 
-           </div>
            <div class="row justify-content-center">
                <label for="contracena" class="col-form-label">Ingresar Contraseña:</label>
                <div class="col-12 col-md-4 justify-content-center">
-                   <input type="password" th:field="*{contracena}" class="form-control" id="contracena" placeholder="Ingresar la contraseña">
+                   <input type="password" th:field="*{contracena}" name="contracena" class="form-control" id="contracena" placeholder="Ingresar la contraseña">
                </div>
            </div>
 

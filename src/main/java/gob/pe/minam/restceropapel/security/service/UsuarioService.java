@@ -98,7 +98,7 @@ public class UsuarioService implements  IUsuarioService, UserDetailsService{
                 .map(role -> new SimpleGrantedAuthority(role.getNombre()))
                 .peek(authority -> logger.info("Role: " + authority.getAuthority()))
                 .collect(Collectors.toList());
-        UserDetails userDetails =(UserDetails)new User(usuario.getUsuario(),usuario.getContracena(), authorities);
+        UserDetails userDetails =(UserDetails)new User(usuario.getUsuario(),usuario.getClaveTempo(), authorities);
         return userDetails;
     }
 
@@ -313,19 +313,19 @@ public class UsuarioService implements  IUsuarioService, UserDetailsService{
     @Transactional(rollbackFor={Exception.class})
     public void spResetearContrasena(Usuario usuario) throws HandledException{
         PasswordEncoder encoder = new BCryptPasswordEncoder();
-        usuario.getSesion().setIdUsuario(usuario.getIdUsuario());
-        Sesion session = obtenerSesion(usuario.getSesion());
+        //Sesion sesion = Sesion.builder().idUsuario(usuario.getIdUsuario()).build();
+       // usuario.getSesion().setIdUsuario(usuario.getIdUsuario());
+        Sesion session = obtenerSesion(Sesion.builder().idUsuario(usuario.getIdUsuario()).build());
         usuario.setIdSesionMod(session.getIdSesion());
         usuario.setContracena(encoder.encode(usuario.getContracena()));
         usuarioMapper.spResetearContrasena(usuario);
     }
-    public Usuario enviarInformacionRecuperarContrasena(String numeroDocumento, String linkApp ){
+    public Usuario enviarInformacionRecuperarContrasena(String numeroDocumento){
 
         Usuario usuario = getUsuarioExterno(numeroDocumento).map(u->{
             Sesion session = obtenerSesion(Sesion
                     .builder()
                     .idUsuario(u.getIdUsuario())
-                    .linkAplicativo(linkApp)
                     .build());
             u.setIdSesionMod(session.getIdSesion());
             usuarioMapper.spModificarUsuarioInactivo(u);

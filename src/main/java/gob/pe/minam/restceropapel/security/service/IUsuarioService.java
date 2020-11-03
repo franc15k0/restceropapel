@@ -21,7 +21,7 @@ public interface IUsuarioService {
     public Integer obtenerUbigeo(String txtUbigeo);
     public Optional<Valido> getUsuarioValido(Valido valid);
     public void spResetearContrasena(Usuario usuario) throws HandledException;
-    public Usuario enviarInformacionRecuperarContrasena(String numeroDocumento, String linkApp);
+    public Usuario enviarInformacionRecuperarContrasena(String numeroDocumento);
     public Reniec buscarReniec(String DNI);
     public void regenerarCodigoValidacion(String token, String linkApp);
     public List<Menu> listMenuSistema(Long idSistema);

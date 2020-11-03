@@ -85,10 +85,10 @@ public class RestControllerUsuario {
     public List<Menu> menu(@PathVariable String idUsuario) {
         return usuarioService.listMenuSistema(Long.parseLong(idUsuario));
     }
-    @GetMapping("/recuperar/{numDocumento}/{linkApp}")
+    @GetMapping("/recuperar/{numDocumento}")
     @ResponseStatus(HttpStatus.OK)
-    public String recuperar(@PathVariable String numDocumento, @PathVariable String linkApp) {
-        Usuario user = usuarioService.enviarInformacionRecuperarContrasena(numDocumento, linkApp);
+    public String recuperar(@PathVariable String numDocumento) {
+        Usuario user = usuarioService.enviarInformacionRecuperarContrasena(numDocumento);
                 Optional.ofNullable(user).orElseThrow(IllegalArgumentException::new);
 
         return "ok";

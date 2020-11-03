@@ -46,22 +46,24 @@ public class ControllerUsuario {
                 .build());
         return "confirmacionRegistro";
     }
-    @ModelAttribute("usuario")
+   /* @ModelAttribute("usuario")
     public Usuario passwordReset() {
         return new Usuario();
-    }
+    }*/
 
     @PostMapping("/usuario/validation-codigo")
-    public String validation(@Valid Valido valido, Model model, HttpServletRequest request) throws HandledException {
+    public String validation(@Valid Valido valido, Model model) throws HandledException {
         //System.out.println(valido.getToken().replaceAll("[^0-9]", ""));
-        valido.setLinkAplicativo(request.getServerPort()+request.getContextPath());
+        //valido.setLinkAplicativo(request.getServerPort()+request.getContextPath());
         AtomicReference<String> vista = new AtomicReference<>("");
         Long idUsuario = Long.parseLong(valido.getToken().replaceAll("[^0-9]", ""));
         System.out.println(valido.getToken()+"::"+valido.getFlgAccionUsuario());
         logger.info("valido.getFlgAccionUsuario().",valido.getFlgAccionUsuario());
         if(valido.getFlgAccionUsuario().equals("0")){
+            System.out.println("valido.getFlgAccionUsuario().equals(0)");
             valido.setIdUsuario(idUsuario);
             usuarioService.validate(valido);
+            System.out.println("valido.getResultado()"+valido.getResultado());
             valido.setResultado(Optional.ofNullable(valido.getResultado()).map(r -> {
                 valido.setEstado("1");
                 return  r;
@@ -74,8 +76,11 @@ public class ControllerUsuario {
         }else{
            usuarioService.getUsuarioValido(valido).map( u ->
                     {
-
-                        model.addAttribute("usuario", u);
+                        model.addAttribute("usuario", Usuario
+                                .builder()
+                                .idUsuario(u.getIdUsuario())
+                                .idUsuarioValid(u.getIdUsuarioValid())
+                                .build());
                         vista.set("cambiarClave");
                         return u;
                     }
@@ -89,19 +94,19 @@ public class ControllerUsuario {
             });
 
         }
-        model.addAttribute("valido", valido);
+        //model.addAttribute("valido", valido);
         return vista.get();
     }
     @PostMapping("/usuario/reset-contrasena")
-    public String resetPassword(Model model, @ModelAttribute("usuario") @Valid Usuario usuario, HttpServletRequest request) {
-        logger.info("resetPassword",request.getServerPort()+request.getContextPath());
-        usuario.getSesion().setLinkAplicativo(request.getServerPort()+request.getContextPath());
+    public String resetPassword(Model model, @Valid Usuario usuario) throws HandledException{
+        System.out.println(usuario.getIdUsuario());
         try{
         usuarioService.spResetearContrasena(usuario);
 
         model.addAttribute("resultado", "1");
-        }catch (HandledException e) {
+        }catch (Exception e) {
             logger.error(e.getMessage());
+            e.printStackTrace();
             model.addAttribute("resultado", "0");;
         }
         return "cambiarClave";
