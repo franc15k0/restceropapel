@@ -320,6 +320,32 @@ public class UsuarioService implements  IUsuarioService, UserDetailsService{
         usuario.setCodigoRol(Constante.CODIGO_ROLES);
         usuario.setDescRol(Constante.NOMBRE_ROL_NATURAL);
         usuarioMapper.spResetearContrasena(usuario);
+        logger.info("usuario.getEsUsuarioExterno()"+usuario.getEsUsuarioExterno());
+        if(usuario.getEsUsuarioExterno().equals("1")){
+            ciudadanoService.getCiudadanoNroDocumento(Constante.ES_PERSONANATURAL,usuario.getUsuario()).orElseGet(() -> {
+                Usuario usuarioExterno = getUsuarioExterno(usuario.getUsuario()).get();
+                PersonaNatural personaNatural = PersonaNatural
+                            .builder()
+                            .numDni(usuarioExterno.getUsuario())
+                            .txtApePaterno(usuarioExterno.getApellidos().split(" ")[0])
+                            .txtApeMaterno(usuarioExterno.getApellidos().split(" ")[1])
+                            .txtNombres(usuarioExterno.getNombres())
+                            .idSesionMod(session.getIdSesion())
+                            .idSesionReg(session.getIdSesion())
+                            .build();
+                ciudadanoService.insertPersonaNatural(personaNatural);
+                ciudadanoService.insertCiudadano(Ciudadano
+                        .builder()
+                        .idNatural(personaNatural.getIdNatural())
+                        .idUsuario(usuario.getIdUsuario())
+                        .numTelefonoCelular(usuarioExterno.getTelefono1())
+                        .txtCorreoElectronico(usuarioExterno.getCorreo())
+                        .idSesionMod(session.getIdSesion())
+                        .idSesionReg(session.getIdSesion())
+                        .build());
+                return new Ciudadano();
+            });
+        }
     }
     public Usuario enviarInformacionRecuperarContrasena(String numeroDocumento){
 

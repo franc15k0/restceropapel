@@ -227,7 +227,8 @@
              #{codigoRol, mode=IN, jdbcType=NUMERIC},
              #{descRol, mode=IN, jdbcType=VARCHAR},
              #{idSesionMod, mode=IN, jdbcType=NUMERIC},
-             #{resultado, mode=OUT, jdbcType=VARCHAR}
+             #{esUsuarioExterno, mode=OUT, jdbcType=VARCHAR},
+             #{usuario, mode=OUT, jdbcType=VARCHAR}
              )
         }
     </update>

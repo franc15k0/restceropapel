@@ -61,6 +61,7 @@ public class Usuario {
     private Integer idSistema;
     private Integer codigoRol;
     private String descRol;
+    private String esUsuarioExterno;
     private List<Usuario> listUsuarios;
     private Valido valido;
     private Sesion sesion;
