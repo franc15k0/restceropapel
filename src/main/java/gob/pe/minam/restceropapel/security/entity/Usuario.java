@@ -58,6 +58,9 @@ public class Usuario {
     private String vcNombre;
     private String fechaPopupCumple;
     private String claveTempo;
+    private Integer idSistema;
+    private Integer codigoRol;
+    private String descRol;
     private List<Usuario> listUsuarios;
     private Valido valido;
     private Sesion sesion;

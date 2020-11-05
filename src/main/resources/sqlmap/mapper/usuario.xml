@@ -223,6 +223,9 @@
              #{idUsuario, mode=IN, jdbcType=NUMERIC},
              #{contracena, mode=IN, jdbcType=VARCHAR},
              #{idUsuarioValid, mode=IN, jdbcType=NUMERIC},
+             #{idSistema, mode=IN, jdbcType=NUMERIC},
+             #{codigoRol, mode=IN, jdbcType=NUMERIC},
+             #{descRol, mode=IN, jdbcType=VARCHAR},
              #{idSesionMod, mode=IN, jdbcType=NUMERIC},
              #{resultado, mode=OUT, jdbcType=VARCHAR}
              )

@@ -78,7 +78,7 @@ public class UsuarioService implements  IUsuarioService, UserDetailsService{
                 PasswordEncoder encoder = new BCryptPasswordEncoder();
                 String passwordEncripted=  encoder.encode(password);
                 usuario= getUsuarioInterno(usuarioName).orElseThrow(() -> new UsernameNotFoundException("Error en el login: no existe el usuario '"+usuarioName+"' en el sistema!"));
-                usuario.setContracena(passwordEncripted);
+                usuario.setClaveTempo(passwordEncripted);
         }else{
             usuario = getUsuarioExterno(usuarioName).orElseThrow(() -> new UsernameNotFoundException("Error en el login: no existe el usuario '"+usuarioName+"' en el sistema!"));
         }
@@ -206,7 +206,7 @@ public class UsuarioService implements  IUsuarioService, UserDetailsService{
             usuarioMapper.spModificarUserValid(valido);
         }catch (Exception ex){
                   logger.error(ex.getMessage());
-                  throw new HandledException("Failed to register User", ex);
+                  valido.setResultado(null);
         }
     }
    public Optional<Usuario> getUsuarioExterno(String userName){
@@ -313,11 +313,12 @@ public class UsuarioService implements  IUsuarioService, UserDetailsService{
     @Transactional(rollbackFor={Exception.class})
     public void spResetearContrasena(Usuario usuario) throws HandledException{
         PasswordEncoder encoder = new BCryptPasswordEncoder();
-        //Sesion sesion = Sesion.builder().idUsuario(usuario.getIdUsuario()).build();
-       // usuario.getSesion().setIdUsuario(usuario.getIdUsuario());
         Sesion session = obtenerSesion(Sesion.builder().idUsuario(usuario.getIdUsuario()).build());
         usuario.setIdSesionMod(session.getIdSesion());
         usuario.setContracena(encoder.encode(usuario.getContracena()));
+        usuario.setIdSistema(Integer.parseInt(environment.getProperty("aplication.idsistema")));
+        usuario.setCodigoRol(Constante.CODIGO_ROLES);
+        usuario.setDescRol(Constante.NOMBRE_ROL_NATURAL);
         usuarioMapper.spResetearContrasena(usuario);
     }
     public Usuario enviarInformacionRecuperarContrasena(String numeroDocumento){
@@ -376,10 +377,10 @@ public class UsuarioService implements  IUsuarioService, UserDetailsService{
             enviarSMS(numeroTelefonoCelular,valido.getCodigo());
 
     }
-    public List<Menu> listMenuSistema(Long idSistema){
+    public List<Menu> listMenuSistema(Long idUsuario){
         Menu menu = Menu
                 .builder()
-                .idUsuario(idSistema)
+                .idUsuario(idUsuario)
                 .idSistema(Integer.parseInt(environment.getProperty("aplication.idsistema")))
                 .build();
         usuarioMapper.spBuscarMenuUsuarioRol(menu);
