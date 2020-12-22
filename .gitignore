@@ -24,6 +24,6 @@ LOG_PATH_IS_UNDEFINED/
 target/
 /target/
 pipeline/
-jemkinsfile
+Jenkinsfile
 ### VS Code ###
 .vscode/
