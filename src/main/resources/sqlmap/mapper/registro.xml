@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gob.pe.minam.restceropapel.api.repository.IRegistroMapper">
+
+    <resultMap id="resultBandeja" type="Registro" >
+        <result column="ID_REGISTRO" property="idRegistro"/>
+        <result column="NUMERO_CERO_PAPEL" property="numeroCeroPapel"/>
+        <result column="NUMERO" property="numeroExpediente"/>
+        <result column="TXT_DESCRIPCION_TRAMITE" property="txtDescripcionTramite"/>
+        <result column="FEC_REGISTRO_TRAMITE" property="fecRegistroTramite"/>
+        <result column="FEC_ENVIO_TRAMITE" property="fecEnvioTramite"/>
+        <result column="COD_EESTA_TRAMI" property="codEestaTrami"/>
+        <result column="DESC_ESTA_TRAMI" property="descEestaTrami"/>
+    </resultMap>
+    <parameterMap id="bandejaParametros" type="Registro">
+        <parameter property="idCiudadano" jdbcType="INTEGER" mode="IN"/>
+        <parameter property="numeroCeroPapel" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="numeroExpediente" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="codEestaTrami" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="fecRegistroDesde" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="fecRegistroHasta" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="listRegistros" jdbcType="CURSOR" mode="OUT" resultMap="resultBandeja"  />
+    </parameterMap>
+    <select id="spBuscarRegistro" parameterType="Registro" statementType="CALLABLE">
+     { CALL
+            BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_GET_REGISTRO(
+        #{idRegistro, mode=IN, jdbcType=NUMERIC},
+        #{numeroCeroPapel, mode=OUT, jdbcType=VARCHAR},
+        #{idExpediente, mode=OUT, jdbcType=NUMERIC},
+        #{txtDescripcionTramite, mode=OUT, jdbcType=VARCHAR},
+        #{fecRegistroTramite, mode=OUT, jdbcType=VARCHAR},
+        #{fecEnvioTramite, mode=OUT, jdbcType=VARCHAR},
+        #{idCiudadano, mode=OUT, jdbcType=NUMERIC},
+        #{codEestaTrami, mode=OUT, jdbcType=VARCHAR},
+        #{flgDeclaracionJurada, mode=OUT, jdbcType=VARCHAR},
+        #{codEorgano, mode=OUT, jdbcType=VARCHAR},
+        #{desOrganoDocumento, mode=OUT, jdbcType=VARCHAR}
+         )
+        }
+    </select>
+    <insert id="spInsertRegistro" parameterType="Registro" statementType="CALLABLE">
+        { CALL
+        BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_INSERT_REGISTRO(
+            #{idExpediente, mode=IN, jdbcType=NUMERIC},
+            #{txtDescripcionTramite, mode=IN, jdbcType=VARCHAR},
+            #{fecRegistroTramite, mode=IN, jdbcType=VARCHAR},
+            #{idCiudadano, mode=IN, jdbcType=NUMERIC},
+            #{codTestaTrami, mode=IN, jdbcType=NUMERIC},
+            #{codEestaTrami, mode=IN, jdbcType=VARCHAR},
+            #{flgDeclaracionJurada, mode=IN, jdbcType=VARCHAR},
+            #{codTorgano, mode=IN, jdbcType=NUMERIC},
+            #{codEorgano, mode=IN, jdbcType=VARCHAR},
+            #{idSesionReg, mode=IN, jdbcType=NUMERIC},
+            #{idSesionMod, mode=IN, jdbcType=NUMERIC},
+            #{idRegistro, mode=OUT, jdbcType=NUMERIC},
+            #{numeroCeroPapel, mode=OUT, jdbcType=VARCHAR},
+            #{resultado, mode=OUT, jdbcType=VARCHAR}
+            )
+        }
+    </insert>
+    <select id="spActualizarRegistroExp" parameterType="Registro" statementType="CALLABLE">
+      { CALL
+             BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_ACTUALIZAR_REGISTRO_EXP(
+         #{idRegistro, mode=IN, jdbcType=VARCHAR},
+         #{idExpediente, mode=IN, jdbcType=NUMERIC},
+         #{codEestaTrami, mode=IN, jdbcType=VARCHAR},
+         #{idSesionMod, mode=IN, jdbcType=NUMERIC},
+         #{resultado, mode=OUT, jdbcType=VARCHAR}
+         )
+    }
+    </select>
+
+    <select id="spListExpedienteBandeja" parameterMap="bandejaParametros" statementType="CALLABLE">
+        {CALL BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_BANDEJA(?, ?, ?, ?, ?, ?, ?)}
+    </select>
+    <update id="spActualizarRegistroEdicion" parameterType="Registro" statementType="CALLABLE">
+      { CALL
+         BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_ACTUALIZAR_REGISTRO(
+         #{idRegistro, mode=IN, jdbcType=VARCHAR},
+         #{txtDescripcionTramite, mode=IN, jdbcType=VARCHAR},
+         #{flgDeclaracionJurada, mode=IN, jdbcType=VARCHAR},
+         #{idSesionMod, mode=IN, jdbcType=NUMERIC},
+         #{resultado, mode=OUT, jdbcType=VARCHAR}
+         )
+    }
+    </update>
+</mapper>

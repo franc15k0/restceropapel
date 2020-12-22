@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title> Verificar Usuario </title>
+    <style>
+        .colorPrincipal {
+            color: #005286;
+            font-family: 'Roboto', sans-serif;
+            font-family: 'Varela Round', sans-serif;
+        }
+        .btn-primary {
+            background-color: #005286;
+            border: none;
+        }
+        h1 {
+            color: #78ab46;
+        }
+
+        body {
+            background-color: #efefef;
+        }
+
+        .error-message {
+            color: #a94442;
+        }
+
+        .error-message:first-letter {
+            text-transform: capitalize;
+        }
+    </style>
+    <script type="text/javascript">
+        function required()
+        {
+            var contracena = document.getElementById("contracena").value;
+            var contracena2 = document.getElementById("contracena2").value;
+            console.log(contracena);
+            if (contracena == "" || contracena2 == "")
+            {
+                swal({
+                    type: 'warning',
+                    title: 'Validación',
+                    text: 'Es necesario ingresar todos los campos',
+                });
+                return false;
+            }
+            if (contracena != "" && contracena2 != ""){
+                if (contracena != contracena2){
+                    swal({
+                        type: 'warning',
+                        title: 'Validación',
+                        text: 'Las valores deben ser iguales',
+                    });
+                    return false;
+                }
+            }
+        }
+    </script>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.12.15/dist/sweetalert2.all.min.js"></script>
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@7.12.15/dist/sweetalert2.min.css'>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+<body>
+<div class="container my-5">
+    <img width="270px" class="d-block mx-auto" src="/restceropapel/assets/img/logo_minam.jpg">
+    <h2 class="my-3 text-center colorPrincipal">Sistema de Trámite Cero Papel</h2>
+    <h3 class="my-3 mt-3 text-center colorPrincipal"> Recuperar Contraseña</h3>
+        <div th:if="${resultado}">
+            <div th:if="${resultado == '0'}">
+                <script th:inline="javascript">
+                    /*<![CDATA[*/
+                    swal({
+                        type: 'warning',
+                        title: 'Validación',
+                        text: 'Se presento un error, intentar mas tarde',
+                    });
+                    /*]]>*/
+                </script>
+            </div>
+            <div th:if="${resultado == '1'}">
+                <script th:inline="javascript">
+                    /*<![CDATA[*/
+                    swal({
+                        type: 'success',
+                        title: 'Se cambio la Contraseña Correctamente',
+                        text: 'Desea ir al Login?',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Si, Enviame!'
+                    }).then(function(result) {
+                        if (result.value) {
+                            location.assign(window.location.protocol+ "//"+window.location.host+"/ceropapelapp")
+                        }
+                    });
+                    /*]]>*/
+                </script>
+            </div>
+
+        </div>
+
+
+       <form action="#" th:action="@{/usuario/reset-contrasena}" th:object="${usuario}" method="post" onsubmit="return required()">
+            <input type="hidden" name="idUsuario" th:value="${usuario.idUsuario}" />
+            <input type="hidden" name="idUsuarioValid" th:value="${usuario.idUsuarioValid}" />
+
+           <div class="row justify-content-center">
+               <label for="contracena" class="col-form-label">Ingresar Nueva Contraseña:</label>
+               <div class="col-12 col-md-4 justify-content-center">
+                   <input type="password" th:field="*{contracena}" name="contracena" class="form-control" id="contracena" placeholder="Ingresar la contraseña">
+               </div>
+           </div>
+
+           <div class="row justify-content-center mt-3">
+               <label for="contracena2" class="col-form-label">Repetir Nueva Contraseña:</label>
+               <div class="col-12 col-md-4 justify-content-center">
+                   <input type="password" th:field="*{confirmContracena}" class="form-control" id="contracena2" placeholder="Ingresar la contraseña">
+               </div>
+           </div>
+
+           <div class="row justify-content-center pr-3">
+               <div class="col-12 col-md-6 pt-3 px-4 " >
+                   <input type="submit" class="form-control btn btn-primary" style="background-color: #005286; border: none;" value="Resetear Contraseña">
+               </div>
+           </div>
+        </form>
+
+
+
+
+</div>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gob.pe.minam.restceropapel.api.repository.IEcodocMapper">
+
+    <resultMap id="personalCursorResult" type="PersonalEcodoc" >
+        <result column="ID_PERSONAL" property="idPersonal"/>
+        <result column="NOMBRES" property="nombres"/>
+        <result column="APELLIDOS" property="apellidos"/>
+        <result column="DNI" property="dni"/>
+        <result column="CARGO" property="cargo"/>
+    </resultMap>
+
+    <parameterMap id="personalParam" type="PersonalEcodoc">
+        <parameter property="idCliente" jdbcType="INTEGER" mode="IN"  />
+        <parameter property="listPersonal" jdbcType="CURSOR" mode="OUT" resultMap="personalCursorResult"  />
+    </parameterMap>
+    <parameterMap id="personalDniParam" type="PersonalEcodoc">
+        <parameter property="idCliente" jdbcType="INTEGER" mode="IN"  />
+        <parameter property="dni" jdbcType="VARCHAR" mode="IN"  />
+        <parameter property="listPersonal" jdbcType="CURSOR" mode="OUT" resultMap="personalCursorResult"  />
+    </parameterMap>
+    <insert id="spInsertClienteEco" parameterType="ClienteEdoc" statementType="CALLABLE">
+        { CALL
+        BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_INSERT_CLIENTE(
+            #{estado, mode=IN, jdbcType=VARCHAR},
+            #{numeroIdentificacion, mode=IN, jdbcType=VARCHAR},
+            #{razonSocial, mode=IN, jdbcType=VARCHAR},
+            #{apellidoPaterno, mode=IN, jdbcType=VARCHAR},
+            #{apellidoMaterno, mode=IN, jdbcType=VARCHAR},
+            #{nombre, mode=IN, jdbcType=VARCHAR},
+            #{telefono, mode=IN, jdbcType=VARCHAR},
+            #{idTipoCliente, mode=IN, jdbcType=VARCHAR},
+            #{idTipoMedioEnvio, mode=IN, jdbcType=VARCHAR},
+            #{idCliente, mode=OUT, jdbcType=NUMERIC},
+            #{resultado, mode=OUT, jdbcType=VARCHAR}
+            )
+        }
+    </insert>
+
+    <insert id="spInsertExpedienteEco" parameterType="ExpedienteEdoc" statementType="CALLABLE">
+        { CALL
+        BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_INSERT_EXPEDIENTE(
+            #{copiado, mode=IN, jdbcType=VARCHAR},
+            #{estado, mode=IN, jdbcType=VARCHAR},
+            #{titulo, mode=IN, jdbcType=VARCHAR},
+            #{idCliente, mode=IN, jdbcType=NUMERIC},
+            #{idPersona, mode=IN, jdbcType=NUMERIC},
+            #{idProceso, mode=IN, jdbcType=NUMERIC},
+
+            #{idPersonaActualiza, mode=IN, jdbcType=NUMERIC},
+            #{plazo, mode=IN, jdbcType=VARCHAR},
+            #{idEstacionActual, mode=IN, jdbcType=NUMERIC},
+            #{idEstacionPrevia, mode=IN, jdbcType=NUMERIC},
+            #{idPlazoTipoDias, mode=IN, jdbcType=NUMERIC},
+            #{idSede, mode=IN, jdbcType=NUMERIC},
+
+            #{referencia, mode=IN, jdbcType=VARCHAR},
+            #{claveExterno, mode=IN, jdbcType=VARCHAR},
+            #{idTipoOrigen, mode=IN, jdbcType=NUMERIC},
+            #{idExpediente, mode=OUT, jdbcType=NUMERIC},
+            #{numero, mode=OUT, jdbcType=VARCHAR},
+            #{resultado, mode=OUT, jdbcType=VARCHAR}
+            )
+        }
+    </insert>
+
+    <insert id="spInsertDocumentoEco" parameterType="DocumentoEdoc" statementType="CALLABLE">
+        { CALL
+        BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_INSERT_DOCUMENTO_ECODOC(
+            #{estado, mode=IN, jdbcType=VARCHAR},
+            #{folios, mode=IN, jdbcType=VARCHAR},
+            #{numero, mode=IN, jdbcType=VARCHAR},
+            #{titulo, mode=IN, jdbcType=VARCHAR},
+            #{autor, mode=IN, jdbcType=VARCHAR},
+            #{expediente, mode=IN, jdbcType=NUMERIC},
+            #{idTipoDocumento, mode=IN, jdbcType=VARCHAR},
+            #{idAreaAutor, mode=IN, jdbcType=NUMERIC},
+            #{presentaCd, mode=IN, jdbcType=VARCHAR},
+            #{foliado, mode=IN, jdbcType=VARCHAR},
+            #{esPrincipal, mode=IN, jdbcType=VARCHAR},
+            #{estadoDigitalizacion, mode=IN, jdbcType=VARCHAR},
+            #{cd, mode=IN, jdbcType=VARCHAR},
+            #{idDocumento, mode=OUT, jdbcType=NUMERIC},
+            #{resultado, mode=OUT, jdbcType=VARCHAR}
+            )
+        }
+    </insert>
+
+    <insert id="spInsertDireccionEco" parameterType="DireccionEdoc" statementType="CALLABLE">
+        { CALL
+        BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_INSERT_DIRECCION(
+            #{direccion, mode=IN, jdbcType=VARCHAR},
+            #{idCliente, mode=IN, jdbcType=NUMERIC},
+            #{ubigeo, mode=IN, jdbcType=VARCHAR},
+            #{idDireccion, mode=OUT, jdbcType=NUMERIC},
+            #{resultado, mode=OUT, jdbcType=VARCHAR}
+            )
+        }
+    </insert>
+
+    <insert id="spInsertArchivoEco" parameterType="ArchivoEdoc" statementType="CALLABLE">
+        { CALL
+        BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_INSERT_ARCHIVO_ECODOC(
+            #{estado, mode=IN, jdbcType=VARCHAR},
+            #{nombre, mode=IN, jdbcType=VARCHAR},
+            #{rutaLocal, mode=IN, jdbcType=VARCHAR},
+            #{documento, mode=IN, jdbcType=NUMERIC},
+            #{esPrincipal, mode=IN, jdbcType=NUMERIC},
+            #{idArchivo, mode=OUT, jdbcType=NUMERIC},
+            #{resultado, mode=OUT, jdbcType=VARCHAR}
+            )
+        }
+    </insert>
+    <insert id="spInsertResponsRegisEco" parameterType="ResponsableRegEdoc" statementType="CALLABLE">
+        { CALL
+        BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_INSERT_RESPON_REGI(
+            #{idExpediente, mode=IN, jdbcType=NUMERIC},
+            #{idPersona, mode=IN, jdbcType=NUMERIC},
+            #{responsable, mode=IN, jdbcType=VARCHAR},
+            #{resultado, mode=OUT, jdbcType=VARCHAR}
+            )
+        }
+    </insert>
+
+    <select id="spBuscarPersonal" parameterMap="personalParam" statementType="CALLABLE">
+        {CALL BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_GET_PERSONAL(?, ?)}
+    </select>
+    <select id="spBuscarPersonalDni" parameterMap="personalDniParam" statementType="CALLABLE">
+        {CALL BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_GET_PERSONAL_DNI(?, ?, ?)}
+    </select>
+
+    <select id="spBuscarCliente" parameterType="ClienteEdoc" statementType="CALLABLE">
+        { CALL
+            BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_GET_CLIENTE(
+            #{idTipoCliente, mode=IN, jdbcType=VARCHAR},
+            #{numeroIdentificacion, mode=IN, jdbcType=VARCHAR},
+            #{idCliente, mode=OUT, jdbcType=NUMERIC},
+            #{estado, mode=OUT, jdbcType=VARCHAR},
+            #{razonSocial, mode=OUT, jdbcType=VARCHAR},
+            #{apellidoPaterno, mode=OUT, jdbcType=VARCHAR},
+            #{apellidoMaterno, mode=OUT, jdbcType=VARCHAR},
+            #{nombre, mode=OUT, jdbcType=VARCHAR},
+            #{telefono, mode=OUT, jdbcType=VARCHAR}
+         )
+       }
+    </select>
+    <insert id="spInsertPersonalEco" parameterType="PersonalEcodoc" statementType="CALLABLE">
+        { CALL
+        BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_INSERT_PERSONALECO(
+            #{dni, mode=IN, jdbcType=VARCHAR},
+            #{apellidos, mode=IN, jdbcType=VARCHAR},
+            #{nombres, mode=IN, jdbcType=VARCHAR},
+            #{cargo, mode=IN, jdbcType=VARCHAR},
+            #{unidadOrganica, mode=IN, jdbcType=VARCHAR},
+            #{correo, mode=IN, jdbcType=VARCHAR},
+            #{idCliente, mode=IN, jdbcType=NUMERIC},
+            #{idPersonal, mode=OUT, jdbcType=NUMERIC},
+            #{resultado, mode=OUT, jdbcType=VARCHAR}
+            )
+        }
+    </insert>
+
+</mapper>

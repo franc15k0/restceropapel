@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gob.pe.minam.restceropapel.security.repository.IUsuarioMapper">
+
+    <resultMap id="usuarioActivoResult" type="Usuario" >
+        <result column="ID_USUARIO" property="idUsuario"/>
+        <result column="USUARIO" property="usuario"/>
+        <result column="CONTRACENA" property="contracena"/>
+        <result column="NOMBRES" property="nombres"/>
+        <result column="APELLIDOS" property="apellidos"/>
+        <result column="CORREO" property="correo"/>
+        <result column="TELEFONO1" property="telefono1"/>
+        <result column="TELEFONO2" property="telefono2"/>
+        <result column="ESTADO_REGISTRO" property="estadoRegistro"/>
+        <result column="CARGO" property="cargo"/>
+        <result column="OFICINA" property="oficina"/>
+        <result column="TIPO" property="tipo"/>
+        <result column="ID_INSTITUCION" property="idInstitucion"/>
+        <result column="ID_USER" property="idUser"/>
+        <result column="ESTADO" property="estado"/>
+        <result column="ID_SESION_REG" property="idSesionReg"/>
+        <result column="ID_SESION_MOD" property="idSesionMod"/>
+        <result column="FECHA_REG" property="fechaReg"/>
+        <result column="FECHA_MOD" property="fechaMod"/>
+        <result column="CAMBIACLAVE" property="cambioClave"/>
+        <result column="ID_TIPO_DOCUMENTO" property="idTipoDocumento"/>
+        <result column="NUMERO_DOCUMENTO" property="numeroDocumento"/>
+        <result column="CLAVE_TEMPO" property="claveTempo"/>
+    </resultMap>
+    <parameterMap id="usuarioActivoParametros" type="Usuario">
+        <parameter property="usuario" jdbcType="VARCHAR" mode="IN"  />
+        <parameter property="listUsuarios" jdbcType="CURSOR" mode="OUT" resultMap="usuarioActivoResult"  />
+    </parameterMap>
+    <resultMap id="rolResult" type="Rol" >
+        <result column="ID_ROL" property="idRol"/>
+        <result column="NOMBRE" property="nombre"/>
+        <result column="DESCRIPCION" property="descripcion"/>
+    </resultMap>
+    <resultMap id="usuarioCursorResult" type="Usuario" >
+        <result column="USUARIO" property="usuario"/>
+        <result column="CONTRACENA" property="contracena"/>
+        <result column="NOMBRES" property="nombres"/>
+        <result column="APELLIDOS" property="apellidos"/>
+        <result column="CORREO" property="correo"/>
+        <result column="TELEFONO1" property="telefono1"/>
+        <result column="TELEFONO2" property="telefono2"/>
+        <result column="ESTADO_REGISTRO" property="estadoRegistro"/>
+        <result column="CARGO" property="cargo"/>
+        <result column="OFICINA" property="oficina"/>
+        <result column="TIPO" property="tipo"/>
+        <result column="ID_INSTITUCION" property="idInstitucion"/>
+        <result column="ID_USER" property="idUser"/>
+        <result column="ESTADO" property="estado"/>
+        <result column="ID_SESION_REG" property="idSesionReg"/>
+        <result column="ID_SESION_MOD" property="idSesionMod"/>
+        <result column="FECHA_REG" property="fechaReg"/>
+        <result column="FECHA_MOD" property="fechaMod"/>
+        <result column="CAMBIACLAVE" property="cambioClave"/>
+        <result column="USUARIO_DEFECTO" property="usuarioDefecto"/>
+    </resultMap>
+    <resultMap id="usuarioPerLdapCursorResult" type="Usuario" >
+        <result column="ID_USER" property="idUser"/>
+        <result column="CODI_EMPL_PER" property="codiEmplPer"/>
+        <result column="CODI_DEPE_TDE" property="codiDepeTde"/>
+        <result column="APE_PAT_PER" property="apellidoPaterno"/>
+        <result column="APE_MAT_PER" property="apellidoMaterno"/>
+        <result column="NOM_EMP_PER" property="nombres"/>
+        <result column="NOMBRE_USUARIO" property="nombreUsuario"/>
+        <result column="DESC_DEPE_TDE" property="descDepeTde"/>
+        <result column="VC_NOMBRE" property="vcNombre"/>
+        <result column="ID_USUARIO" property="idUsuario"/>
+        <result column="FEC_NAC_PER" property="fecNacimiento"/>
+        <result column="FECHA_POPUP_CUMPLE" property="fechaPopupCumple"/>
+    </resultMap>
+
+    <resultMap id="usuarioLdapCursorResult" type="Usuario" >
+        <result column="ID_USUARIO" property="idUsuario"/>
+        <result column="USUARIO" property="usuario"/>
+        <result column="CONTRACENA" property="contracena"/>
+        <result column="NOMBRES" property="nombres"/>
+        <result column="APELLIDOS" property="apellidos"/>
+        <result column="CORREO" property="correo"/>
+        <result column="TELEFONO1" property="telefono1"/>
+        <result column="TELEFONO2" property="telefono2"/>
+        <result column="ESTADO_REGISTRO" property="estadoRegistro"/>
+        <result column="CARGO" property="cargo"/>
+        <result column="OFICINA" property="oficina"/>
+        <result column="TIPO" property="tipo"/>
+        <result column="ID_INSTITUCION" property="idInstitucion"/>
+        <result column="ID_USER" property="idUser"/>
+        <result column="ESTADO" property="estado"/>
+        <result column="ID_SESION_REG" property="idSesionReg"/>
+        <result column="ID_SESION_MOD" property="idSesionMod"/>
+        <result column="FECHA_REG" property="fechaReg"/>
+        <result column="FECHA_MOD" property="fechaMod"/>
+        <result column="CAMBIACLAVE" property="cambioClave"/>
+    </resultMap>
+    <parameterMap id="usuarioParam" type="Usuario">
+        <parameter property="usuario" jdbcType="VARCHAR" mode="IN"  />
+        <parameter property="listUsuarios" jdbcType="CURSOR" mode="OUT" resultMap="usuarioCursorResult"  />
+    </parameterMap>
+
+    <parameterMap id="usuarioPerLdapParam" type="Usuario">
+        <parameter property="usuario" jdbcType="VARCHAR" mode="IN"  />
+        <parameter property="listUsuarios" jdbcType="CURSOR" mode="OUT" resultMap="usuarioPerLdapCursorResult"  />
+    </parameterMap>
+    <parameterMap id="usuarioLdapParam" type="Usuario">
+        <parameter property="idUser" jdbcType="VARCHAR" mode="IN"  />
+        <parameter property="listUsuarios" jdbcType="CURSOR" mode="OUT" resultMap="usuarioLdapCursorResult"  />
+    </parameterMap>
+    <parameterMap id="rolParametros" type="Rol">
+        <parameter property="idUsuario" jdbcType="INTEGER" mode="IN"  />
+        <parameter property="idSistema" jdbcType="INTEGER" mode="IN"  />
+        <parameter property="listRol" jdbcType="CURSOR" mode="OUT" resultMap="rolResult"  />
+    </parameterMap>
+
+    <resultMap id="menuCursorResult" type="Menu" >
+        <result column="ID_MENU" property="idMenu"/>
+        <result column="NOMBRE" property="nombre"/>
+        <result column="DESCRIPCION" property="descripcion"/>
+        <result column="ACCION" property="accion"/>
+        <result column="ESTADO_REGISTRO" property="estadoRegistro"/>
+        <result column="ID_MENU_PADRE" property="idMenuPadre"/>
+        <result column="ID_SISTEMA" property="idSistema"/>
+        <result column="NVISIBLE_MENU" property="nvisibleMenu"/>
+        <result column="NNIVEL_MENU" property="nnivelMenu"/>
+        <result column="PARAMETRO" property="parametro"/>
+        <result column="ORDEN" property="orden"/>
+        <result column="TIPO_MENU" property="tipoMenu"/>
+    </resultMap>
+    <parameterMap id="menuParametro" type="Menu">
+        <parameter property="idUsuario" jdbcType="INTEGER" mode="IN"  />
+        <parameter property="idSistema" jdbcType="INTEGER" mode="IN"  />
+        <parameter property="listMenu" jdbcType="CURSOR" mode="OUT" resultMap="menuCursorResult"  />
+    </parameterMap>
+
+
+    <select id="spUsuarioExterno" parameterMap="usuarioActivoParametros" statementType="CALLABLE">
+        {CALL BD_MINAM.USP_SEL_SG_USUARIO_ACTIVO(?, ?)}
+    </select>
+    <select id="spGetUsuarioValido" parameterType="Valido" statementType="CALLABLE">
+     { CALL
+        BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_GET_USUARIO_VALIDO(
+            #{token, mode=IN, jdbcType=VARCHAR},
+            #{codigo, mode=IN, jdbcType=NUMERIC},
+            #{idUsuarioValid, mode=OUT, jdbcType=NUMERIC},
+            #{idUsuario, mode=OUT, jdbcType=NUMERIC}
+            )
+        }
+    </select>
+
+
+    <select id="spFindByRol" parameterMap="rolParametros" statementType="CALLABLE">
+        {CALL BD_MINAM.USP_SEL_SG_ROL_IDUSU(?, ?, ?)}
+    </select>
+
+
+   <insert id="spInsertUsuario" parameterType="Usuario" statementType="CALLABLE">
+            { CALL
+                BD_MINAM.USP_INS_SG_USUARIO(
+                #{usuario, mode=IN, jdbcType=VARCHAR},
+                #{contracena, mode=IN, jdbcType=VARCHAR},
+                #{nombres, mode=IN, jdbcType=VARCHAR},
+                #{apellidos, mode=IN, jdbcType=VARCHAR},
+                #{correo, mode=IN, jdbcType=VARCHAR},
+                #{telefono1, mode=IN, jdbcType=VARCHAR},
+                #{telefono2, mode=IN, jdbcType=VARCHAR},
+                #{estadoRegistro, mode=IN, jdbcType=VARCHAR},
+                #{cargo, mode=IN, jdbcType=VARCHAR},
+                #{oficina, mode=IN, jdbcType=VARCHAR},
+                #{tipo, mode=IN, jdbcType=VARCHAR},
+                #{idInstitucion, mode=IN, jdbcType=VARCHAR},
+                #{idUser, mode=IN, jdbcType=VARCHAR},
+                #{idSesionReg, mode=IN, jdbcType=VARCHAR},
+                #{idRol, mode=IN, jdbcType=VARCHAR},
+                #{idUsuario, mode=OUT, jdbcType=NUMERIC},
+                #{idTipoDocumento, mode=IN, jdbcType=VARCHAR},
+                #{numeroDocumento, mode=IN, jdbcType=VARCHAR}
+            )
+            }
+    </insert>
+
+    <insert id="spInsertUsuarioValid" parameterType="Valido" statementType="CALLABLE">
+      { CALL
+         BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_INSERT_VALID(
+         #{idUsuario, mode=IN, jdbcType=NUMERIC},
+         #{token, mode=IN, jdbcType=VARCHAR},
+         #{codigo, mode=IN, jdbcType=NUMERIC},
+         #{estado, mode=IN, jdbcType=VARCHAR},
+         #{idCiudadano, mode=IN, jdbcType=NUMERIC},
+         #{idSesionReg, mode=IN, jdbcType=NUMERIC},
+         #{idSesionMod, mode=IN, jdbcType=NUMERIC},
+         #{tokenFinal, mode=OUT, jdbcType=VARCHAR}
+         )
+    }
+    </insert>
+    <update id="spModificarUserValid" parameterType="Valido" statementType="CALLABLE">
+              { CALL
+                 BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_MODIFICAR_USUARIO_VAL(
+                 #{token, mode=IN, jdbcType=VARCHAR},
+                 #{codigo, mode=IN, jdbcType=NUMERIC},
+                 #{idSesionMod, mode=IN, jdbcType=NUMERIC},
+                 #{resultado, mode=OUT, jdbcType=VARCHAR}
+                 )
+               }
+    </update>
+    <update id="spRegenerarUserValid" parameterType="Valido" statementType="CALLABLE">
+              { CALL
+                 BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_REGENERAR_USUARIO_VAL(
+                 #{token, mode=IN, jdbcType=VARCHAR},
+                 #{codigo, mode=IN, jdbcType=NUMERIC},
+                 #{idSesionMod, mode=IN, jdbcType=NUMERIC},
+                 #{idCiudadano, mode=OUT, jdbcType=NUMERIC},
+                 #{resultado, mode=OUT, jdbcType=VARCHAR}
+                 )
+               }
+    </update>
+    <update id="spResetearContrasena" parameterType="Usuario" statementType="CALLABLE">
+          { CALL
+             BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_RESETEAR_CONTRASENA(
+             #{idUsuario, mode=IN, jdbcType=NUMERIC},
+             #{contracena, mode=IN, jdbcType=VARCHAR},
+             #{idUsuarioValid, mode=IN, jdbcType=NUMERIC},
+             #{idSistema, mode=IN, jdbcType=NUMERIC},
+             #{codigoRol, mode=IN, jdbcType=NUMERIC},
+             #{descRol, mode=IN, jdbcType=VARCHAR},
+             #{idSesionMod, mode=IN, jdbcType=NUMERIC},
+             #{esUsuarioExterno, mode=OUT, jdbcType=VARCHAR},
+             #{usuario, mode=OUT, jdbcType=VARCHAR}
+             )
+        }
+    </update>
+
+    <select id="spBuscarUsuarioDefault" parameterMap="usuarioParam" statementType="CALLABLE">
+        {CALL BD_MINAM.USP_SEL_SG_USUARIO_DEFAULT(?, ?)}
+    </select>
+    <update id="spModificarUsuarioInactivo" parameterType="Usuario" statementType="CALLABLE">
+          { CALL
+             BD_MINAM.USP_UPD_ESTADO_USER(
+             #{idUsuario, mode=IN, jdbcType=NUMERIC},
+             #{estadoRegistro, mode=IN, jdbcType=VARCHAR},
+             #{idSesionMod, mode=IN, jdbcType=NUMERIC}
+             )
+        }
+    </update>
+    <select id="spSelPersonalUsuario" parameterMap="usuarioPerLdapParam" statementType="CALLABLE">
+        {CALL SEGFYS.USP_SEL_PERSONAL_USUARIO(?, ?)}
+    </select>
+    <select id="spSelUsuarioIdSegfys" parameterMap="usuarioLdapParam" statementType="CALLABLE">
+        {CALL BD_MINAM.USP_SEL_SG_USUARIO_ID_SEGFYS(?, ?)}
+    </select>
+    <select id="spBuscarMenuUsuarioRol" parameterMap="menuParametro" statementType="CALLABLE">
+        {CALL BD_MINAM.USP_SEL_SG_MENU_USUARIO_ROL(?, ?, ?)}
+    </select>
+</mapper>

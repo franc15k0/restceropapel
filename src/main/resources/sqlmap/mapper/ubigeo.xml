@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gob.pe.minam.restceropapel.api.repository.IUbigeoMapper">
+    <resultMap id="ubigeoCursorResult" type="Ubigeo" >
+        <result column="ID_UBIGEO" property="idUbigeo"/>
+        <result column="NOMBRE" property="nombre"/>
+    </resultMap>
+    <parameterMap id="ubigeoPara" type="Ubigeo">
+        <parameter property="padre" jdbcType="INTEGER" mode="IN"  />
+        <parameter property="listUbigeos" jdbcType="CURSOR" mode="OUT" resultMap="ubigeoCursorResult"  />
+    </parameterMap>
+    <select id="spListarUbigeos" parameterMap="ubigeoPara" statementType="CALLABLE">
+        {CALL BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_GETUBIGEO(?, ?)}
+    </select>
+
+
+    <select id="getFuncionUbigeo" parameterType="Ubigeo" resultType="Integer">
+        SELECT
+            BD_TRAMITE_CERO_PAPEL.FN_OBT_ID_UBIGEO(#{txtUbigeoRegion}, #{txtUbigeoProvincia}, #{txtUbigeoDistrito})
+            FROM
+            DUAL
+    </select>
+
+
+
+</mapper>

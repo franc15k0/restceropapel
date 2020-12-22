@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <!DOCTYPE mapper
+                PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gob.pe.minam.restceropapel.api.repository.IArchivoMapper">
+
+<resultMap id="ubigeoCursorResult" type="Archivo" >
+    <result column="ID_ARCHIVO" property="idArchivo"/>
+    <result column="ID_DOCUMENTO" property="idDocumento"/>
+    <result column="COD_TSUST_DOCUMENTO" property="codTsustDocumento"/>
+    <result column="COD_ESUST_DOCUMENTO" property="codEsustDocumento"/>
+    <result column="DES_SUST_DOCUMENTO" property="descTipoSustento"/>
+    <result column="TXT_NUMERO_ARCHIVO" property="txtNumeroArchivo"/>
+    <result column="FLG_ESPRINCIPAL" property="flgEsprincipal"/>
+    <result column="FLG_ESTA_FIRMADO" property="flgEstaFirmado"/>
+    <result column="TXT_NOMBRE_ARCHIVO" property="txtNombreArchivo"/>
+    <result column="TXT_RUTA_LOCAL" property="txtRutaLocal"/>
+  </resultMap>
+  <parameterMap id="archivoParametro" type="Archivo">
+      <parameter property="idDocumento" jdbcType="INTEGER" mode="IN"  />
+      <parameter property="listArchivos" jdbcType="CURSOR" mode="OUT" resultMap="ubigeoCursorResult"  />
+  </parameterMap>
+  <select id="spBuscarAchivos" parameterMap="archivoParametro" statementType="CALLABLE">
+        {CALL BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_GET_ARCHIVOS(?, ?)}
+  </select>
+  <insert id="spInsertArchivo" parameterType="Archivo" statementType="CALLABLE">
+        { CALL
+        BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_INSERT_ARCHIVO(
+            #{codTsustDocumento, mode=IN, jdbcType=NUMERIC},
+            #{codEsustDocumento, mode=IN, jdbcType=VARCHAR},
+            #{txtNumeroArchivo, mode=IN, jdbcType=VARCHAR},
+            #{flgEsprincipal, mode=IN, jdbcType=VARCHAR},
+            #{flgEstaFirmado, mode=IN, jdbcType=VARCHAR},
+            #{txtNombreArchivo, mode=IN, jdbcType=VARCHAR},
+            #{txtRutaLocal, mode=IN, jdbcType=VARCHAR},
+            #{idDocumento, mode=IN, jdbcType=NUMERIC},
+            #{idSesionReg, mode=IN, jdbcType=NUMERIC},
+            #{idSesionMod, mode=IN, jdbcType=NUMERIC},
+            #{idArchivo, mode=OUT, jdbcType=NUMERIC},
+            #{resultado, mode=OUT, jdbcType=VARCHAR}
+            )
+        }
+    </insert>
+    <update id="spEliminarArchivo" parameterType="Archivo" statementType="CALLABLE">
+      { CALL
+         BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_ELIMINAR_ARCHIVO(
+         #{idArchivo, mode=IN, jdbcType=NUMERIC},
+         #{idSesionMod, mode=IN, jdbcType=NUMERIC},
+         #{resultado, mode=OUT, jdbcType=VARCHAR}
+         )
+       }
+    </update>
+
+</mapper>

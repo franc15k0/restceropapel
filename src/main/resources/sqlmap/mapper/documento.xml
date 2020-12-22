@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gob.pe.minam.restceropapel.api.repository.IDocumentoMapper">
+
+
+    <select id="spBuscarDocumento" parameterType="Documento" statementType="CALLABLE">
+     { CALL
+        BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_GET_DOCUMENTO(
+            #{idRegistro, mode=IN, jdbcType=NUMERIC},
+            #{idDocumento, mode=OUT, jdbcType=NUMERIC},
+            #{codTtipoDocumento, mode=OUT, jdbcType=VARCHAR},
+            #{codEtipoDocumento, mode=OUT, jdbcType=VARCHAR},
+            #{descTipoDocumento, mode=OUT, jdbcType=VARCHAR},
+            #{flgEstado, mode=OUT, jdbcType=VARCHAR}
+            )
+        }
+    </select>
+    <insert id="spInsertDocumento" parameterType="Documento" statementType="CALLABLE">
+        { CALL
+        BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_INSERT_DOCUMENTO(
+            #{codTtipoDocumento, mode=IN, jdbcType=NUMERIC},
+            #{codEtipoDocumento, mode=IN, jdbcType=VARCHAR},
+            #{flgEstado, mode=IN, jdbcType=VARCHAR},
+            #{idRegistro, mode=IN, jdbcType=NUMERIC},
+            #{idSesionReg, mode=IN, jdbcType=NUMERIC},
+            #{idSesionMod, mode=IN, jdbcType=NUMERIC},
+            #{idDocumento, mode=OUT, jdbcType=NUMERIC},
+            #{resultado, mode=OUT, jdbcType=VARCHAR}
+            )
+        }
+    </insert>
+    <update id="spActualizarDocumento" parameterType="Documento" statementType="CALLABLE">
+      { CALL
+         BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_ACTUALIZAR_DOCUMENTO(
+         #{idDocumento, mode=IN, jdbcType=NUMERIC},
+         #{codEtipoDocumento, mode=IN, jdbcType=VARCHAR},
+         #{idSesionMod, mode=IN, jdbcType=NUMERIC},
+         #{resultado, mode=OUT, jdbcType=VARCHAR}
+         )
+       }
+    </update>
+
+</mapper>

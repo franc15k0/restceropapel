@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gob.pe.minam.restceropapel.api.repository.INotificacionMapper">
+
+    <resultMap id="resultNotificacion" type="Notificacion" >
+        <result column="NUMERO" property="numeroExpediente"/>
+        <result column="ID_EXPEDIENTE" property="idExpediente"/>
+        <result column="ID_REGISTRO" property="idRegistro"/>
+        <result column="NUMERO_CERO_PAPEL" property="numeroCeroPapel"/>
+        <result column="NOMBRE_DOCUMENTO" property="nombreDocumento"/>
+        <result column="DESCRIPCION" property="descripcion"/>
+        <result column="FECHA_SALIDA" property="fechaSalida"/>
+        <result column="ESTADO_NOTIFICACION" property="estadoNotificacion"/>
+    </resultMap>
+    <resultMap id="archivoNotificacionCursorResult" type="ArchivoNotificacion" >
+        <result column="NUMERO" property="numero"/>
+        <result column="NOMBRE" property="nombre"/>
+        <result column="ID_ARCHIVO" property="idArchivo"/>  
+    </resultMap>
+
+    <parameterMap id="notificacionParametros" type="Notificacion">
+        <parameter property="idCiudadano" jdbcType="INTEGER" mode="IN"/>
+        <parameter property="idPerNatural" jdbcType="INTEGER" mode="IN"/>
+        <parameter property="idPerJuridica" jdbcType="INTEGER" mode="IN"/>
+        <parameter property="numeroCeroPapel" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="numeroExpediente" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="fecSalidaDesde" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="fecSalidaHasta" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="listNotificacion" jdbcType="CURSOR" mode="OUT" resultMap="resultNotificacion"  />
+    </parameterMap>
+    <parameterMap id="notificacionArchParametros" type="ArchivoNotificacion">
+        <parameter property="idExpediente" jdbcType="INTEGER" mode="IN"/>
+        <parameter property="listArchivoNotificacion" jdbcType="CURSOR" mode="OUT" resultMap="archivoNotificacionCursorResult"  />
+    </parameterMap>
+    <select id="spListarNotificacion" parameterMap="notificacionParametros" statementType="CALLABLE">
+        {CALL BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_NOTIFICACION(?, ?, ?, ?, ?, ?, ?, ?)}
+    </select>
+    <select id="spListarArchivosNotificacion" parameterMap="notificacionArchParametros" statementType="CALLABLE">
+        {CALL BD_TRAMITE_CERO_PAPEL.PKG_TRAMITE_CERO_PAPEL.USP_CP_NOTIFICACION_ARCH(?, ?)}
+    </select>
+
+</mapper>

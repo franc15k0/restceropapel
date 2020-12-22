@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title> Verificar Usuario </title>
+    <style>
+        .colorPrincipal {
+            color: #005286;
+            font-family: 'Roboto', sans-serif;
+            font-family: 'Varela Round', sans-serif;
+        }
+        body, html {
+            margin:0;
+            padding;
+            height:100%
+        }
+
+        a {
+            font-size:1.25em;
+        }
+        #content {
+            padding:25px;
+        }
+
+
+        #fade {
+            display: none;
+            position:absolute;
+            top: 0%;
+            left: 0%;
+            width: 100%;
+            height: 100%;
+            background-color: #ababab;
+            z-index: 1001;
+            -moz-opacity: 0.8;
+            opacity: .70;
+            filter: alpha(opacity=80);
+        }
+
+        #modal {
+            display: none;
+            position: absolute;
+            top: 45%;
+            left: 45%;
+            width: 100px;
+            height: 100px;
+            padding:30px 15px 0px;
+            border: 3px solid #ababab;
+            box-shadow:1px 1px 10px #ababab;
+            border-radius:20px;
+            background-color: white;
+            z-index: 1002;
+            text-align:center;
+            overflow: auto;
+        }
+
+    </style>
+    <script type="text/javascript">
+        function openModal() {
+            document.getElementById('modal').style.display = 'block';
+            document.getElementById('fade').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            document.getElementById('fade').style.display = 'none';
+        }
+        function required()
+        {
+            var codigo = document.getElementById("codigo").value;
+            console.log(codigo);
+            if (codigo == "")
+            {
+                swal({
+                    type: 'warning',
+                    title: 'Validación',
+                    text: 'Ingrese el codigo',
+                });
+                return false;
+            }
+        }
+        function regenerarCodigo(){
+            openModal();
+            const ajax_request = new XMLHttpRequest();
+            const url = window.location.protocol+ "//"+window.location.host+"/restceropapel/usuario/regenerarsms/"+document.getElementById("token").value;
+            console.log(url);
+            ajax_request.onreadystatechange = function() {
+                if  (ajax_request.status != 0 ) {
+                        if (ajax_request.readyState == 4 && ajax_request.status == 200 ) {
+                            closeModal();
+                            swal({
+                                type: 'success',
+                                title: 'Información',
+                                text: 'Se regenero su codigo de activación, se ha enviado el nuevo codigo a su N° de Celular',
+                            });
+                        }else{
+                            closeModal();
+                            swal({
+                                type: 'warning',
+                                title: 'Información',
+                                text: 'Se presento un error al regenerar su codigo de activación',
+                            });
+                        }
+                }
+            }
+            ajax_request.open( "GET", url, true );
+            ajax_request.send();
+        }
+    </script>
+<!--    <link th:href="@{/webjars/bootstrap/4.0.0/css/bootstrap.min.css}" rel="stylesheet" />-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.12.15/dist/sweetalert2.all.min.js"></script>
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@7.12.15/dist/sweetalert2.min.css'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+<body>
+<div class="container my-5" id="content">
+    <img width="270px" class="d-block mx-auto" src="/restceropapel/assets/img/logo_minam.jpg">
+    <h2 class="my-3 text-center colorPrincipal">Sistema de Trámite Cero Papel - Validación de Usuarios</h2>
+                <div th:if="${respuesta}">
+                    <div th:if="${respuesta.estado == '0'}">
+                        <script th:inline="javascript">
+                            /*<![CDATA[*/
+                            swal({
+                                type: 'warning',
+                                title: 'Validación',
+                                text: /*[[${respuesta.resultado}]]*/ 'default',
+                            });
+                            /*]]>*/
+                        </script>
+                    </div>
+                    <div th:if="${respuesta.estado == '1'}">
+                        <script th:inline="javascript">
+                            /*<![CDATA[*/
+                            swal({
+                                type: 'success',
+                                title: 'Registro Correcto',
+                                text: 'Se Realizo correctamente la Validación del Usuario, Desea ir al Login?',
+                                showCancelButton: true,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: 'Si, Enviame!'
+                            }).then(function(result) {
+                                if (result.value) {
+                                    location.assign(window.location.protocol+ "//"+window.location.host+"/ceropapel")
+                              }
+                            });
+                            /*]]>*/
+                        </script>
+                    </div>
+                </div>
+
+                <form action="#" th:action="@{/usuario/validation-codigo}" th:object="${valido}" method="post" onsubmit="return required()">
+                    <div th:if="${valido}">
+                        <input type="hidden" id = "token" name="token" th:value="${valido.token}"/>
+                        <input type="hidden" id = "flgAccionUsuario" name="flgAccionUsuario" th:value="${valido.flgAccionUsuario}"/>
+                    </div>
+                    <div th:unless="${valido}">
+                        <input type="hidden" id = "token" name="token" th:value="${token}"/>
+                        <input type="hidden" name="flgAccionUsuario" th:value="${flgAccionUsuario}"/>
+                    </div>
+                    <div class="row justify-content-center">
+                       <label for="codigo" class="col-form-label">Código:</label>
+                       <div class="col-12 col-md-4 justify-content-center">
+                                <input type="number" th:field="*{codigo}" class="form-control" id="codigo" placeholder="Ingresar el código enviado a su celular">
+                       </div>
+                    </div>
+                    <div class="row justify-content-center pr-2">
+                       <div class="col-12 col-md-3 pt-3 px-1 " >
+                                <input type="submit" class="form-control btn btn-primary" style="background-color: #005286; border: none;" value="Validar">
+                       </div>
+                        <div class="col-12 col-md-3 pt-3 px-1 " >
+                            <input type="button" class="form-control btn btn-primary" style="background-color: #005286; border: none;" onclick="regenerarCodigo()" value="Volver a Generar SMS">
+                        </div>
+                    </div>
+                </form>
+    <div id="fade"></div>
+    <div id="modal">
+        <img id="loader" src="/restceropapel/assets/img/loading.gif" />
+    </div>
+</div>
+</body>
+</html>
